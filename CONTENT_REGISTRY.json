@@ -1,0 +1,67 @@
+{
+  "$schema_note": "Sổ cái đăng ký học liệu. Mỗi đơn vị trong content/index.ts phải có đúng một mục ở đây; chạy `npm run validate` để đối chiếu.",
+  "version": "0.1.0",
+  "updatedAt": "2026-11-19",
+  "items": [
+    {
+      "id": "TOAN-09-PTB2-001",
+      "title": "Hệ thức Viète và bài toán tham số của phương trình bậc hai",
+      "subject": "toan",
+      "grade": 9,
+      "track": "tuyen-sinh-10",
+      "difficulty": "van-dung",
+      "status": "seed-verified",
+      "accessLevel": "free",
+      "filePath": "content/toan/09/ptb2-viete-tham-so.ts",
+      "updatedAt": "2026-11-19"
+    },
+    {
+      "id": "TOAN-12-CUCTRI-001",
+      "title": "Tìm cực trị của hàm số bậc ba và biện luận theo tham số",
+      "subject": "toan",
+      "grade": 12,
+      "track": "tot-nghiep-thpt",
+      "difficulty": "van-dung",
+      "status": "seed-verified",
+      "accessLevel": "free",
+      "filePath": "content/toan/12/cuc-tri-ham-bac-ba.ts",
+      "updatedAt": "2026-11-19"
+    },
+    {
+      "id": "VAN-12-NLXH-001",
+      "title": "Nghị luận về tư tưởng đạo lí: mối quan hệ giữa tài và tâm",
+      "subject": "van",
+      "grade": 12,
+      "track": "tot-nghiep-thpt",
+      "difficulty": "van-dung",
+      "status": "seed-verified",
+      "accessLevel": "free",
+      "filePath": "content/van/12/nlxh-tai-va-tam.ts",
+      "updatedAt": "2026-11-19"
+    },
+    {
+      "id": "ANH-06-PRON-001",
+      "title": "Phân biệt nguyên âm /ɪ/ và /iː/ (ship – sheep)",
+      "subject": "anh",
+      "grade": 6,
+      "track": "nen-tang",
+      "difficulty": "nhan-biet",
+      "status": "seed-verified",
+      "accessLevel": "free",
+      "filePath": "content/anh/06/pron-i-ngan-dai.ts",
+      "updatedAt": "2026-11-19"
+    },
+    {
+      "id": "ANH-12-NOTICE-001",
+      "title": "Đọc điền thông báo/tờ rơi: chọn từ cho chỗ trống",
+      "subject": "anh",
+      "grade": 12,
+      "track": "tot-nghiep-thpt",
+      "difficulty": "van-dung",
+      "status": "seed-verified",
+      "accessLevel": "free",
+      "filePath": "content/anh/12/doc-dien-thong-bao.ts",
+      "updatedAt": "2026-11-19"
+    }
+  ]
+}

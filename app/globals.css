@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/* dark: theo thuộc tính data-theme (lưu lựa chọn trong localStorage) */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Token nhận diện kế thừa từ https://github.com/HUBEduNavigator/home (app/globals.css) */
+:root {
+  --bg: #fbf9f4;
+  --surface: #ffffff;
+  --surface-2: #f3efe6;
+  --ink: #12233b;
+  --muted: #4b5b72;
+  --line: #e3ddcf;
+  --navy: #0f2a4a;
+  --navy-2: #173a63;
+  --accent: #f0b429;
+  --accent-ink: #261800;
+  --accent-text: #8a5a00;
+  --focus: #1d5fd0;
+  --ok: #1f7a4d;
+  --warn-bg: #fff4d6;
+  --warn-line: #e6c36a;
+  --warn-ink: #5c3d00;
+  --quote-bg: #eef3fb;
+  --quote-line: #9db6dc;
+}
+[data-theme="dark"] {
+  --bg: #0a1626;
+  --surface: #112238;
+  --surface-2: #162b45;
+  --ink: #eef2f8;
+  --muted: #aab8cc;
+  --line: #243d5c;
+  --navy: #0a1a2f;
+  --navy-2: #123056;
+  --accent: #f5be3d;
+  --accent-ink: #261800;
+  --accent-text: #f5be3d;
+  --focus: #7fb0ff;
+  --ok: #5ccf94;
+  --warn-bg: #3a2c0c;
+  --warn-line: #8a6a1c;
+  --warn-ink: #ffe3a0;
+  --quote-bg: #14304f;
+  --quote-line: #3d6396;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-navy: var(--navy);
+  --color-navy2: var(--navy-2);
+  --color-accent: var(--accent);
+  --color-accentink: var(--accent-ink);
+  --color-accenttext: var(--accent-text);
+  --color-ok: var(--ok);
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+body {
+  overflow-x: clip;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Be Vietnam Pro", system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { font-family: "Fraunces", Georgia, serif; line-height: 1.25; letter-spacing: -0.01em; font-weight: 600; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+a { text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Phiên âm IPA: font có đủ ký tự quốc tế (Noto Sans: latin, latin-ext, greek) */
+.ipa { font-family: "Noto Sans", "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif; font-feature-settings: "kern"; letter-spacing: 0.01em; }
+
+/* Công thức KaTeX: khối cuộn ngang, nội dòng không vỡ trên điện thoại */
+.math-block { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; margin: .75rem 0; padding: .25rem 0; -webkit-overflow-scrolling: touch; }
+.math-block .katex-display { margin: 0; }
+.math-inline .katex { font-size: 1.05em; }
+
+/* Bảng cuộn ngang mượt trên điện thoại */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: .9rem; background: var(--surface); }
+.table-scroll table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: .98rem; line-height: 1.5; }
+.table-scroll th, .table-scroll td { padding: .6rem .85rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.table-scroll th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+.table-scroll tr:last-child td { border-bottom: 0; }
+
+/* Khung đọc Ngữ văn */
+.reading { max-width: 42rem; line-height: 1.9; font-size: 1.08rem; }
+
+.prose-list { padding-left: 1.4rem; display: grid; gap: .4rem; }
+.prose-list li::marker { color: var(--accent-text); }
+
+@layer components {
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    min-height: 2.75rem; padding: .6rem 1.2rem; border-radius: 999px;
+    font-weight: 600; font-size: .98rem; line-height: 1.2; cursor: pointer; text-align: center;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { filter: brightness(1.05); }
+  .btn-ghost { border: 1.5px solid var(--ink); color: var(--ink); background: transparent; }
+  .btn-ghost:hover { background: var(--surface-2); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 1.1rem; transition: border-color .2s ease; }
+  a.card:hover { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+  .container-x { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; }
+  @media (min-width: 768px) { .container-x { padding-inline: 2rem; } }
+  .eyebrow { font-weight: 600; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); }
+  .chip { display: inline-flex; align-items: center; gap: .3rem; padding: .1rem .65rem; border-radius: 999px; font-size: .82rem; font-weight: 600; line-height: 1.6; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+  .chip-btn { cursor: pointer; min-height: 2.25rem; padding: .25rem .85rem; font-size: .92rem; transition: background-color .15s ease, border-color .15s ease; }
+  .chip-btn:hover { border-color: var(--accent); }
+  .chip-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .section-title { font-size: clamp(1.4rem, 3.4vw, 1.85rem); margin-bottom: .9rem; }
+  .skip { position: absolute; left: -999px; top: 0; background: var(--accent); color: var(--accent-ink); padding: .75rem 1rem; z-index: 100; }
+  .skip:focus { left: 1rem; top: 1rem; }
+  .field { width: 100%; min-height: 2.75rem; padding: .55rem .9rem; border-radius: .8rem; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; }
+  .field:focus { border-color: var(--focus); }
+  .callout { border-radius: .9rem; padding: .9rem 1.1rem; border: 1px solid var(--line); background: var(--surface-2); }
+  .callout-warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
+  .quote-box { background: var(--quote-bg); border-left: 4px solid var(--quote-line); border-radius: .5rem .9rem .9rem .5rem; padding: .9rem 1.1rem; }
+}
