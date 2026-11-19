@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SlidersHorizontal } from "lucide-react";
+import { SubjectIcon } from "@/components/SubjectIcon";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -26,57 +28,70 @@ export default async function SubjectPage({ params }: { params: Promise<{ subjec
   const info = SUBJECT_INFO[s];
   const items = getCatalog().filter((i) => i.subject === s);
 
+  const unavailable = GRADES.filter((g) => !countBy(s, g));
+
   return (
-    <div className="container-x py-8">
-      <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: info.name }]} />
-      <h1 className="mt-4 text-3xl md:text-4xl">{info.name}</h1>
-      <p className="mt-2 max-w-3xl text-lg text-muted">{info.description}</p>
+    <div className="container-x page-shell">
+      <Breadcrumb items={[{ label: "Khám phá", href: "/" }, { label: info.name }]} />
+      <header className="page-intro">
+        <SubjectIcon subject={s} />
+        <h1 className="mt-3">{info.name}</h1>
+        <p>{info.tagline}.</p>
+      </header>
 
-      <h2 className="section-title mt-10">Theo lớp</h2>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-        {GRADES.map((g) => {
-          const n = countBy(s, g);
-          const body = (
-            <>
-              <span className="block font-display text-xl">Lớp {g}</span>
-              <span className="block text-sm text-muted">{n > 0 ? `${n} dạng bài` : "Đang cập nhật"}</span>
-            </>
-          );
-          return n > 0 ? (
-            <Link key={g} href={`/hoc-lieu/?mon=${s}&lop=${g}`} className="card px-4 py-3 text-center">{body}</Link>
+      <div className="subject-layout">
+        <aside className="library-browse" aria-label={`Tra cứu ${info.name}`}>
+          <section>
+            <h2>Theo lớp</h2>
+            <div className="grade-grid">
+              {GRADES.map((g) => countBy(s, g) > 0 ? (
+                <Link key={g} href={`/hoc-lieu/?mon=${s}&lop=${g}`} prefetch={false} aria-label={`Lớp ${g}`}>{g}</Link>
+              ) : (
+                <span key={g} aria-label={`Lớp ${g} – Đang cập nhật`}>{g}</span>
+              ))}
+            </div>
+            {unavailable.length > 0 && (
+              <p className="browse-note">Đang cập nhật lớp {new Intl.ListFormat("vi").format(unavailable.map(String))}.</p>
+            )}
+          </section>
+          <section>
+            <h2>Nhóm học liệu</h2>
+            <ul className="subject-tracks">
+              {TRACKS.map((track) => {
+                const count = countBy(s, undefined, track);
+                return (
+                  <li key={track}>
+                    {count > 0 ? (
+                      <Link href={`/hoc-lieu/?mon=${s}&nhom=${track}`} prefetch={false}>
+                        {TRACK_INFO[track].name}<span className="browse-count">{count}</span>
+                      </Link>
+                    ) : (
+                      <span>{TRACK_INFO[track].name} <small>Đang cập nhật</small></span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        </aside>
+
+        <section aria-labelledby="subject-documents">
+          <div className="collection-heading">
+            <div>
+              <h2 id="subject-documents">Tài liệu đã đăng</h2>
+              <p className="mt-1 text-sm text-muted">{items.length} dạng bài</p>
+            </div>
+            <Link href={`/hoc-lieu/?mon=${s}`} prefetch={false} className="btn btn-ghost">
+              <SlidersHorizontal size={17} aria-hidden /> Lọc tài liệu
+            </Link>
+          </div>
+          {items.length > 0 ? (
+            <div className="document-grid">{items.map((item) => <UnitCard key={item.id} item={item} />)}</div>
           ) : (
-            <div key={g} className="card px-4 py-3 text-center opacity-80" aria-label={`Lớp ${g}: đang cập nhật theo lộ trình`}>{body}</div>
-          );
-        })}
+            <p className="text-muted">Đang cập nhật theo lộ trình.</p>
+          )}
+        </section>
       </div>
-
-      <h2 className="section-title mt-10">Theo nhóm học liệu</h2>
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {TRACKS.map((t) => {
-          const n = countBy(s, undefined, t);
-          const body = (
-            <>
-              <span className="block font-display text-lg">{TRACK_INFO[t].name}</span>
-              <span className="block text-sm text-muted">{TRACK_INFO[t].description}</span>
-              <span className="mt-1 block text-sm font-semibold">{n > 0 ? `${n} dạng bài` : "Đang cập nhật theo lộ trình"}</span>
-            </>
-          );
-          return n > 0 ? (
-            <Link key={t} href={`/hoc-lieu/?mon=${s}&nhom=${t}`} className="card block p-4">{body}</Link>
-          ) : (
-            <div key={t} className="card p-4 opacity-80">{body}</div>
-          );
-        })}
-      </div>
-
-      <h2 className="section-title mt-10">Dạng bài đã đăng</h2>
-      {items.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          {items.map((it) => <UnitCard key={it.id} item={it} />)}
-        </div>
-      ) : (
-        <p className="text-muted">Đang cập nhật theo lộ trình.</p>
-      )}
     </div>
   );
 }

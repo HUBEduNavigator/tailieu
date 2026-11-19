@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Về kho học liệu và cách ki�
 
 export default function AboutPage() {
   return (
-    <div className="container-x py-8">
+    <div className="container-x page-shell">
       <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Về kho học liệu" }]} />
       <div className="mt-4 max-w-3xl space-y-6">
         <h1 className="text-3xl md:text-4xl">Về kho học liệu và cách kiểm chứng</h1>
@@ -48,7 +48,7 @@ export default function AboutPage() {
         </section>
 
         <p>
-          <Link href="/hoc-lieu/" className="btn btn-primary">Tra cứu dạng bài</Link>
+          <Link prefetch={false} href="/hoc-lieu/" className="btn btn-primary">Tra cứu dạng bài</Link>
         </p>
       </div>
     </div>

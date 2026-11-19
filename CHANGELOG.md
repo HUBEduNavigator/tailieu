@@ -2,6 +2,12 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạng YYYY-MM-DD.
 
+## [0.2.0] – 2026-11-20
+
+- Thiết kế riêng cho kho học liệu. Trang khám phá đưa tìm kiếm, danh sách tài liệu và lối tắt theo môn, lớp, kỳ thi vào cùng một bố cục.
+- Danh mục giữ từ khóa và bộ lọc trong URL. Bảng lọc trên điện thoại có thể thu gọn.
+- Trang đọc có mục lục riêng và liên kết nhanh đến phương pháp, ví dụ có lời giải và lỗi thường gặp.
+
 ## [0.1.0] – 2026-11-19 · `P0-TAILIEU-CORE`
 
 ### Thêm mới

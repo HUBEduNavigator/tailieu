@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ArrowUpRight, ListTree } from "lucide-react";
+import { SubjectIcon } from "@/components/SubjectIcon";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Rich, RichList } from "@/components/Rich";
 import { DIFFICULTY_INFO, SUBJECT_INFO, TRACK_INFO } from "@/lib/labels";
@@ -189,59 +191,65 @@ export function UnitView({ unit }: { unit: LearningUnit }) {
   );
 
   const toc = (
-    <ol className="space-y-1.5 text-[0.95rem]">
+    <ol className="toc-links">
       {secs.map((s) => (
         <li key={s.id}>
-          <a href={`#${s.id}`} className="block rounded-lg px-2 py-1 text-muted transition-colors hover:bg-surface2 hover:text-ink">{s.title}</a>
+          <a href={`#${s.id}`} className="toc-link">{s.title}</a>
         </li>
       ))}
     </ol>
   );
 
   return (
-    <div className="container-x py-8">
+    <div className="container-x page-shell reader">
       <Breadcrumb
         items={[
-          { label: "Trang chủ", href: "/" },
+          { label: "Khám phá", href: "/" },
           { label: subj.name, href: `/mon/${t.subject}/` },
           { label: `Lớp ${t.grade}`, href: `/hoc-lieu/?mon=${t.subject}&lop=${t.grade}` },
           { label: t.topic, href: `/hoc-lieu/?mon=${t.subject}&lop=${t.grade}&chude=${slugify(t.topic)}` },
           { label: unit.title },
         ]}
       />
-      <header className="mt-4 max-w-3xl">
-        <p className="font-mono text-sm text-muted">{unit.id}</p>
-        <h1 className="mt-1 text-3xl md:text-4xl">{unit.title}</h1>
-        <p className="mt-3 text-lg text-muted">{unit.summary}</p>
+      <header className="reader-header">
+        <div className="reader-kicker">
+          <SubjectIcon subject={t.subject} />
+          <p>{subj.name} · Lớp {t.grade} <span className="block font-mono text-xs text-muted">{unit.id}</span></p>
+        </div>
+        <h1>{unit.title}</h1>
+        <p className="reader-summary">{unit.summary}</p>
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className="chip">{subj.name}</span>
-          <span className="chip">Lớp {t.grade}</span>
           <span className="chip">{TRACK_INFO[t.track].name}</span>
           <span className="chip">{DIFFICULTY_INFO[unit.difficulty].name}</span>
           <span className="chip">{t.topic}</span>
         </div>
-        <p className="mt-3 text-sm text-muted">Vị trí chương trình: {t.curriculumPosition} · Cập nhật {unit.updatedAt}</p>
+        <p className="mt-3 text-sm text-muted">{t.curriculumPosition} · Cập nhật {unit.updatedAt}</p>
+        <nav className="reader-jumps" aria-label="Đọc nhanh">
+          <a href="#phuong-phap">Phương pháp <ArrowUpRight size={14} aria-hidden /></a>
+          <a href="#vi-du">Ví dụ có lời giải <ArrowUpRight size={14} aria-hidden /></a>
+          <a href="#loi-sai">Lỗi thường gặp <ArrowUpRight size={14} aria-hidden /></a>
+        </nav>
       </header>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[16rem_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-24 lg:h-fit" aria-label="Mục lục">
+      <div className="reader-layout">
+        <aside className="reader-toc" aria-label="Mục lục">
           <details className="card p-4 lg:hidden">
             <summary className="cursor-pointer font-semibold">Mục lục</summary>
             <div className="mt-2">{toc}</div>
           </details>
-          <div className="card hidden p-4 lg:block">
-            <p className="mb-2 font-semibold">Mục lục</p>
+          <nav aria-label="Các phần trong tài liệu" className="card toc-panel hidden lg:block">
+            <h2><ListTree size={19} aria-hidden /> Mục lục</h2>
             {toc}
-          </div>
+          </nav>
         </aside>
-        <article className={`min-w-0 space-y-10 ${t.subject === "van" ? "reading" : ""}`}>
+        <article className={`reader-paper ${t.subject === "van" ? "reading" : ""}`}>
           {secs.map((s) => (
             <Section key={s.id} id={s.id} title={s.title}>
               {s.node}
             </Section>
           ))}
           <p className="pt-4">
-            <Link href={`/hoc-lieu/?mon=${t.subject}&lop=${t.grade}`} className="btn btn-ghost">← Các dạng bài khác của {subj.name} lớp {t.grade}</Link>
+            <Link prefetch={false} href={`/hoc-lieu/?mon=${t.subject}&lop=${t.grade}`} className="btn btn-ghost">← Các dạng bài khác của {subj.name} lớp {t.grade}</Link>
           </p>
         </article>
       </div>

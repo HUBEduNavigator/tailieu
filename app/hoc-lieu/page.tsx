@@ -2,20 +2,24 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Catalog } from "@/components/Catalog";
+import { UnitCard } from "@/components/UnitCard";
 import { getCatalog } from "@/lib/content";
 
-export const metadata: Metadata = { title: "Tra cứu dạng bài" };
+export const metadata: Metadata = { title: "Danh mục học liệu" };
 
 export default function HocLieuPage() {
+  const items = getCatalog();
   return (
-    <div className="container-x py-8">
-      <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Tra cứu dạng bài" }]} />
-      <h1 className="mt-4 mb-2 text-3xl md:text-4xl">Tra cứu dạng bài</h1>
-      <p className="mb-6 max-w-3xl text-muted">
-        Lọc kết hợp theo môn, lớp, nhóm học liệu, chủ đề và mức độ; hoặc gõ từ khóa (có dấu hay không dấu đều được).
-      </p>
-      <Suspense fallback={<p className="text-muted">Đang tải bộ lọc…</p>}>
-        <Catalog items={getCatalog()} />
+    <div className="container-x page-shell">
+      <Breadcrumb items={[{ label: "Khám phá", href: "/" }, { label: "Danh mục" }]} />
+      <header className="page-intro">
+        <h1>Danh mục học liệu</h1>
+        <p>Tìm theo từ khóa có dấu hoặc không dấu, rồi thu hẹp kết quả bằng bộ lọc.</p>
+      </header>
+      <Suspense fallback={
+        <div className="document-grid">{items.map((item) => <UnitCard key={item.id} item={item} />)}</div>
+      }>
+        <Catalog items={items} />
       </Suspense>
     </div>
   );

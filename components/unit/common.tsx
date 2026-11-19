@@ -114,7 +114,7 @@ export function IdLinks({ ids, empty }: { ids: string[]; empty: string }) {
     <ul className="prose-list list-disc">
       {units.map((u) => (
         <li key={u.id}>
-          <Link href={unitHref(u.id)} className="underline">
+          <Link prefetch={false} href={unitHref(u.id)} className="underline">
             {u.title}
           </Link>{" "}
           <span className="font-mono text-sm text-muted">{u.id}</span>

@@ -48,3 +48,9 @@ Mỗi quyết định: bối cảnh → quyết định → lý do → hệ qu�
 
 ## P0-013 · Seed data
 - 5 đơn vị (Toán 2, Văn 1, Anh 2). Văn chỉ làm 1 vì không thể kiểm chứng nguyên văn trích dẫn trực tuyến trong phiên P0, nên giữ số lượng tối thiểu theo nguyên tắc “không bịa trích dẫn”.
+
+## Thiết kế riêng cho kho học liệu · 2026-11-20
+
+- Người dùng yêu cầu làm lại giao diện theo nhu cầu tìm và đọc tài liệu. Cập nhật quyết định P0-006 về kế thừa bố cục, màu và dấu hiệu nhận diện từ `home`.
+- Trang khám phá có tìm kiếm và các lối tắt, danh mục dùng bộ lọc chia sẻ được qua URL, trang chi tiết có khung đọc và mục lục.
+- Tên HUB EduNavigator và liên kết về `home` dùng để nhận diện hệ sinh thái. Kho vẫn xuất tĩnh tại `/tailieu` với các URL dạng bài hiện có.

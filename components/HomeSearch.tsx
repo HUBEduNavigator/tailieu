@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ArrowRight, Search } from "lucide-react";
 import type { CatalogItem } from "@/lib/content";
 import { SUBJECT_INFO } from "@/lib/labels";
 import { searchItems } from "@/lib/search";
@@ -9,48 +10,64 @@ import { unitHref } from "@/lib/text";
 
 export function HomeSearch({ items }: { items: CatalogItem[] }) {
   const [q, setQ] = useState("");
-  const results = useMemo(() => (q.trim() ? searchItems(items, q).slice(0, 5) : []), [items, q]);
+  const [showResults, setShowResults] = useState(false);
+  const router = useRouter();
+  const query = q.trim();
+  const results = query ? searchItems(items, query).slice(0, 5) : [];
+  const catalogPath = "/hoc-lieu/";
+  const href = query ? `/hoc-lieu/?q=${encodeURIComponent(query)}` : catalogPath;
+
   return (
-    <div className="mx-auto w-full max-w-2xl">
-      <label htmlFor="home-q" className="sr-only">
-        Tìm dạng bài
-      </label>
-      <div className="relative">
-        <Search aria-hidden size={20} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-        <input
-          id="home-q"
-          type="search"
-          className="field !min-h-14 !rounded-full !pl-12 text-lg"
-          placeholder="Tìm dạng bài: tên, mã, chủ đề (có dấu hay không dấu)"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          autoComplete="off"
+    <div
+      className="hero-search"
+      onFocus={() => setShowResults(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setShowResults(false);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && showResults && query) {
+          e.preventDefault();
+          setShowResults(false);
+        }
+      }}
+    >
+      <form
+        role="search"
+        action={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${catalogPath}`}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setShowResults(false);
+          router.push(href);
+        }}
+      >
+        <label htmlFor="home-q" className="sr-only">Tìm dạng bài</label>
+        <Search size={21} aria-hidden />
+        <input id="home-q" name="q" type="search" value={q} autoComplete="off"
+          placeholder="Tìm chủ đề hoặc mã bài…"
+          onChange={(e) => { setQ(e.target.value); setShowResults(true); }}
         />
-      </div>
+        <button type="submit" className="btn btn-primary">Tìm kiếm</button>
+      </form>
       <div aria-live="polite">
-        {q.trim() && (
-          <div className="card mt-3 p-2 text-left">
-            {results.length > 0 ? (
+        {query && showResults && (
+          <div className="card search-results">
+            {results.length ? (
               <ul>
-                {results.map((r) => (
-                  <li key={r.id}>
-                    <Link href={unitHref(r.id)} className="block rounded-xl px-3 py-2 hover:bg-surface2">
-                      <span className="font-semibold">{r.title}</span>
-                      <span className="block text-sm text-muted">
-                        {SUBJECT_INFO[r.subject].name} · Lớp {r.grade} · {r.id}
-                      </span>
+                {results.map((item) => (
+                  <li key={item.id}>
+                    <Link href={unitHref(item.id)} prefetch={false} className="search-hit">
+                      <strong>{item.title}</strong>
+                      <span>{SUBJECT_INFO[item.subject].name} · Lớp {item.grade} · {item.id}</span>
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="px-3 py-2 text-muted">Chưa có dạng bài khớp từ khóa này. Mục này có thể đang được cập nhật theo lộ trình.</p>
+              <p className="p-3 text-sm text-muted">Chưa có dạng bài khớp. Các chủ đề còn thiếu đang cập nhật theo lộ trình.</p>
             )}
-            <div className="border-t border-line px-3 pt-2 pb-1 text-sm">
-              <Link href={`/hoc-lieu/?q=${encodeURIComponent(q.trim())}`} className="underline">
-                Xem kết quả đầy đủ và lọc theo môn, lớp, nhóm học liệu
-              </Link>
-            </div>
+            <Link href={href} prefetch={false} className="search-more">
+              Xem kết quả trong danh mục <ArrowRight size={16} aria-hidden />
+            </Link>
           </div>
         )}
       </div>

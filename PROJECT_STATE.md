@@ -1,6 +1,6 @@
 # PROJECT_STATE – Ảnh chụp tiến độ
 
-_Cập nhật: 2026-11-19 · Phiên bản: v0.1.0_
+_Cập nhật: 2026-11-20 · Phiên bản: v0.2.0_
 
 ## Tổng quan
 
@@ -12,6 +12,10 @@ _Cập nhật: 2026-11-19 · Phiên bản: v0.1.0_
 | **Giai đoạn 4** | Hoàn thiện, đồng bộ liên kết, bàn giao ổn định (nội dung có thể khóa theo `accessLevel` nếu quyết định sau) | Chờ |
 
 (Cách chia 4 giai đoạn và nội dung chi tiết: `TASK_QUEUE.md`.)
+
+## Giao diện kho học liệu
+
+Trang khám phá, danh mục, trang môn và trang đọc dùng bố cục riêng cho thư viện. Các đường dẫn công khai, dữ liệu và mức kiểm chứng của 5 dạng bài được giữ theo P0.
 
 ## Kho học liệu hiện có
 
@@ -28,7 +32,7 @@ Toàn bộ ở trạng thái `seed-verified` (đã tự kiểm, **chưa** thẩm
 - Khung Next.js 16 + React 19 + Tailwind 4, xuất tĩnh, `basePath` `/tailieu`.
 - Workflow `.github/workflows/deploy.yml` chạy khi push lên `main`.
 - Kiểm tra: `npm run typecheck`, `npm run validate`, `npm run build` (đã chạy ở P0, xem `HANDOFF.md`).
-- Việc người dùng cần làm một lần: bật Pages → Source = GitHub Actions (xem `README.md`).
+- GitHub Pages triển khai từ GitHub Actions. Xem hướng dẫn kiểm tra lần chạy trong `README.md`.
 
 ## Trạng thái đồng bộ (3 trạng thái, xem `AI_PROJECT_GUIDE.md` mục 5)
 

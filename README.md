@@ -3,7 +3,7 @@
 Website tĩnh về **học liệu tự học và ngân hàng dạng bài** cho học sinh Việt Nam lớp 6–12 (chương trình GDPT 2018), ba môn: **Toán học, Ngữ văn, Tiếng Anh**. Thuộc hệ sinh thái HUB EduNavigator (trang chủ: <https://hubedunavigator.github.io/home/>).
 
 - Địa chỉ khi đã bật GitHub Pages: <https://hubedunavigator.github.io/tailieu/>
-- Phiên bản hiện tại: **v0.1.0** (hoàn tất giai đoạn P0, xem `CHANGELOG.md`)
+- Phiên bản hiện tại: **v0.2.0** (giao diện kho học liệu, xem `CHANGELOG.md`)
 
 ## Học liệu được tổ chức thế nào
 
@@ -13,9 +13,11 @@ Năm nhóm học liệu: `Nền tảng`, `Nâng cao`, `Tuyển sinh lớp 10`, `
 
 Mỗi dạng bài là một tệp dữ liệu có cấu trúc chặt chẽ (15 trường chuẩn, xem `CONTENT_SCHEMA.md`). Giao diện tự đọc dữ liệu: **thêm học liệu mới không phải sửa giao diện**.
 
+Trang **Khám phá** có tìm kiếm nhanh và lối tắt theo môn, lớp, kỳ thi. Trang **Danh mục** hỗ trợ lọc kết hợp và chia sẻ bộ lọc qua URL. Trong mỗi dạng bài, người đọc có thể dùng mục lục hoặc nhảy thẳng đến phương pháp, ví dụ và lỗi thường gặp.
+
 ## Công nghệ
 
-Cùng họ với repo `home`: Next.js (App Router) + TypeScript + Tailwind CSS 4, xuất tĩnh (`output: "export"`).
+Next.js (App Router) + TypeScript + Tailwind CSS 4, xuất tĩnh (`output: "export"`).
 Công thức Toán dùng **KaTeX** dựng sẵn lúc build (không cần CDN, không cần JavaScript để hiển thị công thức). Phông chữ (Be Vietnam Pro, Fraunces, Noto Sans cho IPA) được đóng gói cùng dự án qua `@fontsource`, không gọi Google Fonts.
 
 ## Cấu trúc thư mục

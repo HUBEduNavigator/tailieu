@@ -1,28 +1,18 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import type { CatalogItem } from "@/lib/content";
 import { DIFFICULTY_INFO, SUBJECT_INFO, TRACK_INFO } from "@/lib/labels";
 import { DIFFICULTIES, GRADES, SUBJECTS, TRACKS } from "@/lib/schema";
-import { searchItems, matchesQuery } from "@/lib/search";
+import { matchesQuery, searchItems } from "@/lib/search";
 import { UnitCard } from "./UnitCard";
 
-interface Filters {
-  q: string;
-  mon: string;
-  lop: string;
-  nhom: string;
-  chude: string;
-  muc: string;
-}
-const EMPTY: Filters = { q: "", mon: "", lop: "", nhom: "", chude: "", muc: "" };
-const KEYS = Object.keys(EMPTY) as (keyof Filters)[];
+const FACETS = ["mon", "lop", "nhom", "chude", "muc"] as const;
+type Facet = (typeof FACETS)[number];
 
 function Group({
-  label,
-  options,
-  value,
-  onChange,
+  label, options, value, onChange,
 }: {
   label: string;
   options: { value: string; label: string }[];
@@ -31,13 +21,12 @@ function Group({
 }) {
   return (
     <fieldset>
-      <legend className="mb-1.5 text-sm font-semibold text-muted">{label}</legend>
+      <legend className="mb-2 text-sm font-semibold">{label}</legend>
       <div className="flex flex-wrap gap-2">
-        <button type="button" className="chip chip-btn" aria-pressed={value === ""} onClick={() => onChange("")}>
-          Tất cả
-        </button>
+        <button type="button" className="chip chip-btn" aria-pressed={!value} onClick={() => onChange("")}>Tất cả</button>
         {options.map((o) => (
-          <button key={o.value} type="button" className="chip chip-btn" aria-pressed={value === o.value} onClick={() => onChange(value === o.value ? "" : o.value)}>
+          <button key={o.value} type="button" className="chip chip-btn"
+            aria-pressed={value === o.value} onClick={() => onChange(value === o.value ? "" : o.value)}>
             {o.label}
           </button>
         ))}
@@ -47,108 +36,107 @@ function Group({
 }
 
 export function Catalog({ items }: { items: CatalogItem[] }) {
-  const params = useSearchParams();
-  const initial = useMemo(() => {
-    const f = { ...EMPTY };
-    for (const k of KEYS) f[k] = params.get(k) ?? "";
-    return f;
-    // chỉ đọc tham số lần đầu; sau đó trạng thái nằm trong bộ lọc
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const [f, setF] = useState<Filters>(initial);
+  const routeParams = useSearchParams();
+  const [query, setQuery] = useState(() => routeParams.toString());
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Đồng bộ lên URL để chia sẻ/quay lại được.
   useEffect(() => {
-    const sp = new URLSearchParams();
-    for (const k of KEYS) if (f[k]) sp.set(k, f[k]);
-    const qs = sp.toString();
-    window.history.replaceState(null, "", qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
-  }, [f]);
+    // Read the current URL when navigation finishes, including Back and Forward.
+    // A router snapshot can lag behind a recent keystroke.
+    setQuery(new URLSearchParams(window.location.search).toString());
+  }, [routeParams]);
 
-  const set = useCallback((k: keyof Filters, v: string) => {
-    setF((prev) => {
-      const next = { ...prev, [k]: v };
-      if (k === "mon" || k === "lop") next.chude = "";
-      return next;
-    });
-  }, []);
+  const params = new URLSearchParams(query);
+  const q = params.get("q") ?? "";
+  const mon = params.get("mon") ?? "";
+  const lop = params.get("lop") ?? "";
+  const nhom = params.get("nhom") ?? "";
+  const chude = params.get("chude") ?? "";
+  const muc = params.get("muc") ?? "";
 
-  const facetMatch = (it: CatalogItem, skip?: keyof Filters) =>
-    (skip === "mon" || !f.mon || it.subject === f.mon) &&
-    (skip === "lop" || !f.lop || String(it.grade) === f.lop) &&
-    (skip === "nhom" || !f.nhom || it.track === f.nhom) &&
-    (skip === "chude" || !f.chude || it.topicSlug === f.chude) &&
-    (skip === "muc" || !f.muc || it.difficulty === f.muc);
+  function updateQuery(key?: Facet | "q", value = "") {
+    const next = new URLSearchParams(window.location.search);
+    if (!key) {
+      for (const name of [...FACETS, "q"]) next.delete(name);
+    } else {
+      if (value) next.set(key, value);
+      else next.delete(key);
+      if (key === "mon" || key === "lop") next.delete("chude");
+    }
+    const nextQuery = next.toString();
+    setQuery(nextQuery);
+    window.history.replaceState(null, "", `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}`);
+  }
 
-  const results = useMemo(() => searchItems(items.filter((it) => facetMatch(it)), f.q), [items, f]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const topics = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const it of items) if (facetMatch(it, "chude") && matchesQuery(it, f.q)) m.set(it.topicSlug, it.topic);
-    return [...m.entries()].sort((a, b) => a[1].localeCompare(b[1], "vi"));
-  }, [items, f]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const active = KEYS.some((k) => f[k]);
-  const gradeOnly = f.lop && !f.q && !f.nhom && !f.chude && !f.muc;
+  const candidates = items.filter((it) =>
+    (!mon || it.subject === mon) &&
+    (!lop || String(it.grade) === lop) &&
+    (!nhom || it.track === nhom) &&
+    (!muc || it.difficulty === muc),
+  );
+  const topicOptions = new Map(candidates.filter((it) => matchesQuery(it, q)).map((it) => [it.topicSlug, it.topic]));
+  const selectedTopic = chude && items.find((it) => it.topicSlug === chude);
+  if (selectedTopic) topicOptions.set(chude, selectedTopic.topic);
+  const topics = [...topicOptions].sort((a, b) => a[1].localeCompare(b[1], "vi"));
+  const results = searchItems(candidates.filter((it) => !chude || it.topicSlug === chude), q);
+  const facetCount = FACETS.filter((key) => params.get(key)).length;
+  const active = Boolean(q || facetCount);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[19rem_1fr]">
-      <aside className="card h-fit space-y-5 p-5 lg:sticky lg:top-24" aria-label="Bộ lọc">
-        <div>
-          <label htmlFor="q" className="mb-1.5 block text-sm font-semibold text-muted">
-            Tìm kiếm (tên dạng bài, mã, chủ đề, từ khóa)
-          </label>
-          <input
-            id="q"
-            type="search"
-            className="field"
-            placeholder="Ví dụ: viete, cuc tri, IPA, ANH-06"
-            value={f.q}
-            onChange={(e) => set("q", e.target.value)}
-            autoComplete="off"
-          />
-          <p className="mt-1 text-xs text-muted">Gõ có dấu hay không dấu đều được.</p>
+    <div className="catalog-layout">
+      <div role="search" className="catalog-search">
+        <label htmlFor="q" className="sr-only">Tìm theo tên dạng bài, mã hoặc chủ đề</label>
+        <Search size={21} aria-hidden />
+        <input id="q" type="search" className="field" placeholder="Tìm tên dạng bài, chủ đề hoặc mã…"
+          value={q} onChange={(e) => updateQuery("q", e.target.value)} autoComplete="off" />
+      </div>
+
+      <aside className="catalog-filters card" aria-label="Bộ lọc">
+        <button type="button" className="filter-toggle" aria-expanded={filtersOpen} aria-controls="catalog-facets"
+          onClick={() => setFiltersOpen(!filtersOpen)}>
+          <SlidersHorizontal size={18} aria-hidden />
+          Bộ lọc {facetCount > 0 && `(${facetCount})`}
+        </button>
+        <div id="catalog-facets" data-open={filtersOpen} className="filter-fields">
+          <div className="filter-heading">
+            <h2>Bộ lọc</h2>
+            {active && <button type="button" className="filter-clear" onClick={() => updateQuery()}>Xóa bộ lọc</button>}
+          </div>
+          <Group label="Môn học" value={mon} onChange={(v) => updateQuery("mon", v)}
+            options={SUBJECTS.map((s) => ({ value: s, label: SUBJECT_INFO[s].name }))} />
+          <Group label="Lớp" value={lop} onChange={(v) => updateQuery("lop", v)}
+            options={GRADES.map((g) => ({ value: String(g), label: String(g) }))} />
+          <Group label="Nhóm học liệu / kỳ thi" value={nhom} onChange={(v) => updateQuery("nhom", v)}
+            options={TRACKS.map((t) => ({ value: t, label: TRACK_INFO[t].name }))} />
+          <div>
+            <label htmlFor="chude" className="mb-2 block text-sm font-semibold">Chủ đề</label>
+            <select id="chude" className="field" value={chude} onChange={(e) => updateQuery("chude", e.target.value)}>
+              <option value="">Tất cả chủ đề</option>
+              {chude && !topics.some(([slug]) => slug === chude) && <option value={chude}>Chủ đề chưa có trong kho</option>}
+              {topics.map(([slug, name]) => <option key={slug} value={slug}>{name}</option>)}
+            </select>
+          </div>
+          <Group label="Mức độ" value={muc} onChange={(v) => updateQuery("muc", v)}
+            options={DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_INFO[d].name }))} />
         </div>
-        <Group label="Môn học" value={f.mon} onChange={(v) => set("mon", v)} options={SUBJECTS.map((s) => ({ value: s, label: SUBJECT_INFO[s].name }))} />
-        <Group label="Lớp" value={f.lop} onChange={(v) => set("lop", v)} options={GRADES.map((g) => ({ value: String(g), label: String(g) }))} />
-        <Group label="Nhóm học liệu / kỳ thi" value={f.nhom} onChange={(v) => set("nhom", v)} options={TRACKS.map((t) => ({ value: t, label: TRACK_INFO[t].name }))} />
-        <div>
-          <label htmlFor="chude" className="mb-1.5 block text-sm font-semibold text-muted">Chủ đề</label>
-          <select id="chude" className="field" value={f.chude} onChange={(e) => set("chude", e.target.value)}>
-            <option value="">Tất cả chủ đề</option>
-            {topics.map(([slug, name]) => (
-              <option key={slug} value={slug}>{name}</option>
-            ))}
-          </select>
-        </div>
-        <Group label="Mức độ" value={f.muc} onChange={(v) => set("muc", v)} options={DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_INFO[d].name }))} />
-        {active && (
-          <button type="button" className="btn btn-ghost w-full" onClick={() => setF(EMPTY)}>
-            Xóa bộ lọc
-          </button>
-        )}
       </aside>
 
-      <section aria-live="polite" aria-label="Kết quả">
-        <p className="mb-4 text-muted">
-          {results.length > 0 ? `${results.length} dạng bài phù hợp` : "Chưa có dạng bài phù hợp"}
+      <section className="catalog-results" aria-label="Kết quả">
+        <p aria-live="polite" className="mb-4 text-sm font-semibold text-muted">
+          {results.length > 0 ? `${results.length} dạng bài ${active ? "phù hợp" : "đã đăng"}` : "Chưa có dạng bài phù hợp"}
         </p>
         {results.length > 0 ? (
-          <div className="grid gap-4">
-            {results.map((it) => (
-              <UnitCard key={it.id} item={it} />
-            ))}
-          </div>
+          <div className="document-grid">{results.map((item) => <UnitCard key={item.id} item={item} />)}</div>
         ) : (
           <div className="card p-6">
-            <p className="font-semibold">Đang cập nhật theo lộ trình</p>
+            <h2 className="text-xl">Đang cập nhật theo lộ trình</h2>
             <p className="mt-2 text-muted">
-              {gradeOnly
-                ? `Học liệu cho lớp ${f.lop} ở bộ lọc này chưa được đăng. Chúng tôi chỉ đăng những dạng bài đã kiểm chứng, nên các mục còn trống sẽ được bổ sung dần theo lộ trình.`
-                : "Không có dạng bài nào khớp với bộ lọc hiện tại. Hãy thử bỏ bớt điều kiện lọc hoặc gõ từ khóa khác; nếu mục bạn cần chưa có thì đang được cập nhật theo lộ trình."}
+              {lop && !q && !nhom && !chude && !muc
+                ? `Học liệu lớp ${lop} trong mục đã chọn chưa được đăng.`
+                : "Thử từ khóa khác hoặc bỏ bớt điều kiện lọc để tìm tài liệu."}
             </p>
             {active && (
-              <button type="button" className="btn btn-primary mt-4" onClick={() => setF(EMPTY)}>
+              <button type="button" className="btn btn-primary mt-4" onClick={() => updateQuery()}>
                 Xem tất cả dạng bài
               </button>
             )}

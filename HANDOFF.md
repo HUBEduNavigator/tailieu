@@ -1,43 +1,27 @@
 # HANDOFF – Bàn giao nhiệm vụ
 
-_Cập nhật: 2026-11-19 · AI thực hiện: Claude Code · Nhiệm vụ: `P0-TAILIEU-CORE`_
+_Cập nhật 2026-11-20 · Thiết kế lại giao diện kho học liệu_
 
 ## (1) Giai đoạn hiện tại
 
-**Giai đoạn 1 (P0) – đã hoàn thành.** Giai đoạn 2–4 đang chờ (xem `TASK_QUEUE.md`). Phiên bản `v0.1.0`.
+**Giai đoạn 1 (P0) – đã hoàn thành.** Giai đoạn 2–4 đang chờ (xem `TASK_QUEUE.md`). Phiên bản `v0.2.0` cập nhật giao diện thư viện.
 
 ## (2) Mã và tên nhiệm vụ gần nhất
 
-`P0-TAILIEU-CORE` – Khởi tạo Khung Website Học liệu HUB EduNavigator (Toán – Ngữ văn – Tiếng Anh, lớp 6–12) và Hệ thống Quản lý Dự án Đa AI. Prompt lưu tại `prompts/P0-TAILIEU-CORE.md`.
+Thiết kế lại kho học liệu theo yêu cầu người dùng ngày 2026-11-20. Prompt `prompts/P0-TAILIEU-CORE.md` ghi yêu cầu gốc về dữ liệu, tra cứu và trình bày theo môn. Quyết định mới về thiết kế được ghi trong `DECISIONS_LOG.md`.
 
 ## (3) Hạng mục đã hoàn thành và đã kiểm tra
 
-Kết quả chạy thật trong phiên P0 (Node 22, Next 16.4.6):
-
-| Hạng mục | Kết quả |
-|---|---|
-| `npm run typecheck` (tsc strict) | Đạt, không lỗi |
-| `npm run validate` | Đạt: 5 đơn vị, 398 công thức KaTeX dựng thành công, 11 nguồn, 5 mục sổ cái khớp dữ liệu |
-| `npm run build` | Đạt: 14 trang tĩnh, không lỗi, không cảnh báo; `out/.nojekyll` có mặt; mọi `href/src` đều mang tiền tố `/tailieu/` |
-| `npm audit` | 0 lỗ hổng |
-| Kiểm thử trình duyệt (`scripts/e2e-smoke.cjs`, Chromium/Playwright, phục vụ `out/` dưới `/tailieu/`) | **57/57 đạt**: duyệt toàn bộ 11 trang nội bộ đều 200 và không liên kết ngoài `/tailieu`; không lỗi console/request thất bại; 375px không tràn ngang ở cả 11 trang; không lộ `$` hay `\` thô ở 5 trang bài (desktop và 375px); font KaTeX và Noto Sans (IPA, đủ ký tự `ɪ ʃ ː ˈ ə θ ð ŋ ɚ ɡ ɒ`) nạp đúng; công thức khối dài cuộn ngang ở 375px; 13 truy vấn tìm kiếm có dấu/không dấu cho kết quả đầu đúng; bộ lọc đa chiều và URL tham số; “Đang cập nhật theo lộ trình” hiện đúng khi trống; breadcrumb, mục lục, liên kết tiên quyết; chuyển sáng/tối và lưu qua tải lại; `404.html` thân thiện |
-| Kiểm tra hình ảnh | Đã xem ảnh chụp (desktop, 375px, chế độ tối) cho trang chủ, bảng IPA, Thẻ Dẫn chứng, ví dụ Toán 12 |
-| Kiểm chứng Toán | Mọi điều kiện, nghiệm, giá trị tham số, giá trị cực trị, khoảng cách giữa hai điểm cực trị được tính lại độc lập bằng sympy trước khi viết |
-
-Chưa được kiểm thử trong phiên này: **chạy workflow thực tế trên GitHub Actions** và hiển thị trên máy thật. Xem mục 6.
+- Cập nhật trang khám phá, danh mục, trang môn và trang đọc. Các trang vẫn dùng URL dưới `/tailieu`.
+- `npm run check` đã kiểm tra TypeScript, 5 dạng bài, 398 công thức KaTeX, 11 nguồn và tạo bản tĩnh.
+- Bộ kiểm thử Chromium kiểm tra điều hướng, bố cục ở 375 px, tìm kiếm, các bộ lọc, mục lục, phông KaTeX và IPA, liên kết nội bộ và chế độ sáng/tối.
+- Xem commit và trạng thái triển khai trên GitHub để xác định phiên bản đang phục vụ.
 
 ## (4) Tệp, thư mục, trang vừa tạo hoặc sửa
 
-Repo `tailieu` trống trước P0, nên **toàn bộ tệp là mới**:
-
-- **Cấu hình**: `package.json`, `package-lock.json`, `next.config.ts`, `tsconfig.json`, `postcss.config.mjs`, `.gitignore`, `public/.nojekyll`, `.github/workflows/deploy.yml`
-- **Giao diện/trang** (`app/`): `layout.tsx`, `globals.css`, `page.tsx` (trang chủ), `hoc-lieu/page.tsx` (tra cứu + lọc), `mon/[subject]/page.tsx` (3 trang môn), `bai/[slug]/page.tsx` (5 trang dạng bài), `gioi-thieu/page.tsx`, `not-found.tsx`, `icon.svg`
-- **Component** (`components/`): `Header`, `Footer`, `Logo`, `ThemeToggle`, `Breadcrumb`, `Rich` (KaTeX), `Catalog` (bộ lọc), `HomeSearch`, `UnitCard`, `unit/` (`UnitView`, `common`, `VanParts`, `AnhParts`)
-- **Lõi** (`lib/`): `schema.ts`, `labels.ts`, `rich.ts`, `search.ts`, `text.ts`, `content.ts`, `sources.ts`
-- **Dữ liệu** (`content/`): `index.ts` + 5 tệp học liệu (xem mục 5)
-- **Công cụ**: `scripts/validate-content.ts`, `scripts/e2e-smoke.cjs`
-- **Hệ thống quản lý (13 mục)**: `README.md`, `AI_PROJECT_GUIDE.md`, `CONTENT_SCHEMA.md`, `PROJECT_STATE.md`, `CONTENT_REGISTRY.json`, `COVERAGE_MATRIX.csv`, `SOURCE_REGISTRY.csv`, `PROMPT_INDEX.md`, `TASK_QUEUE.md`, `DECISIONS_LOG.md`, `CHANGELOG.md`, `HANDOFF.md`, `prompts/` (`P0-TAILIEU-CORE.md`, `META_PROMPT_FINAL.md` giữ chỗ, `RESUME_PROJECT_PROMPT.md`)
-- **Trạng thái commit/push**: xem commit hash trong `git log` và báo cáo cuối của nhiệm vụ (một tệp không thể tự chứa hash của chính commit chứa nó).
+- `app/` chứa bố cục, màu, favicon, ảnh minh họa WebP và các trang đã thiết kế lại.
+- `components/` chứa điều hướng, tìm kiếm, bộ lọc, thẻ tài liệu và bố cục đọc.
+- `scripts/e2e-smoke.cjs` kiểm tra thêm tìm kiếm bằng Enter, đóng gợi ý bằng Escape, lọc trên điện thoại và liên kết đọc nhanh.
 
 ## (5) Dữ liệu và nguồn đã dùng
 
@@ -53,7 +37,7 @@ Toàn bộ ở trạng thái `seed-verified` (tự kiểm; **chưa** qua thẩm 
 
 Nguồn: 11 mục trong `SOURCE_REGISTRY.csv` (CT GDPT 2018 và 3 chương trình môn, Quyết định 764/QĐ-BGDĐT ngày 08/03/2024, Truyện Kiều, Bình Ngô đại cáo, tục ngữ, Cambridge Dictionary, Handbook of the IPA, biên soạn gốc HUB). Cột `verified_status` ghi trung thực mức đối chiếu của từng nguồn.
 
-Nhận diện kế thừa từ repo `home` (đọc trực tiếp, commit `abcd536`): xem `DECISIONS_LOG.md` mục P0-006. Không cần dán cấu hình thủ công.
+Giao diện kho dùng bảng màu và bố cục riêng theo quyết định ngày 2026-11-20 trong `DECISIONS_LOG.md`.
 
 ## (6) Lỗi, vấn đề phát hiện chưa xử lý
 
@@ -61,7 +45,7 @@ Nhận diện kế thừa từ repo `home` (đọc trực tiếp, commit `abcd53
 2. **Phiên âm IPA chưa tra trực tuyến** từng từ ở Cambridge/Oxford (mạng bị chặn); mới rà soát theo quy ước. Chưa có âm thanh mẫu.
 3. **Định dạng đề Tiếng Anh**: chỉ xác nhận được số hiệu/ngày của Quyết định 764/QĐ-BGDĐT (08/03/2024); trang tra cứu ghi chú nội dung môn Tiếng Anh chưa cập nhật nên **chưa khẳng định** vị trí/số câu của dạng “đọc điền thông báo” trong đề. Bài mẫu được viết là “mô phỏng định dạng”.
 4. **Số hiệu và ngày Thông tư 32/2018/TT-BGDĐT (26/12/2018)** ghi theo hiểu biết, chưa tra lại văn bản gốc; `url` để trống.
-5. **Workflow `deploy.yml` chưa chạy thực tế trên GitHub.** Phiên bản action được sao theo repo `home` (checkout@v7, setup-node@v7, configure-pages@v6, upload-pages-artifact@v5, deploy-pages@v5) nhưng chưa tự xác nhận. Người dùng cần bật Pages (Source = GitHub Actions) và xem kết quả lần chạy đầu.
+5. Kiểm tra lượt chạy `Deploy to GitHub Pages` tương ứng mỗi lần đẩy lên `main` để xác nhận phiên bản đã được xuất bản.
 6. **Kiểm thử 375px là mô phỏng khung nhìn bằng Chromium**, chưa thử trên điện thoại thật.
 7. **Định nghĩa 7 bước `a → g`** do P0 tự soạn (đề không liệt kê chi tiết); cần người dùng xác nhận (`DECISIONS_LOG.md` P0-011).
 8. `META_PROMPT_FINAL.md` mới là tệp giữ chỗ (người dùng chưa dán nội dung).
@@ -74,7 +58,6 @@ Không có tệp dở dang. Những việc đã nêu ở mục 6 là việc ki�
 
 ## (8) Điều kiện, đầu vào để tiếp tục
 
-- Người dùng bật GitHub Pages (Settings → Pages → Source: **GitHub Actions**) và xác nhận lần chạy workflow thành công; báo lại nếu có lỗi (đính kèm log).
 - Người/AI có **bản in hoặc nguồn tra cứu đáng tin** để đối chiếu trích dẫn Văn và IPA (mục 6.1–6.2).
 - Người dùng xác nhận bộ 7 bước (6.7) và (nếu có) dán `META_PROMPT_FINAL`.
 - Người dùng chốt thứ tự ưu tiên lớp/chủ đề cho giai đoạn 2 (đề xuất: lớp 9 và 12 trước).
@@ -97,7 +80,7 @@ Chỉ sửa khi người dùng ra quyết định mới và ghi vào `DECISIONS_
 3. KaTeX dựng lúc build với `throwOnError: true`; CSS/phông đóng gói cục bộ; không dùng CDN (P0-003).
 4. Phông đóng gói bằng `@fontsource`; Noto Sans cho IPA (P0-004).
 5. Không thêm hoạt ảnh nặng/thư viện chuyển động (P0-005).
-6. Token nhận diện kế thừa từ `home` (P0-006).
+6. Dùng bảng màu và bố cục thư viện độc lập theo quyết định ngày 2026-11-20. Giữ tên và liên kết về hệ sinh thái HUB EduNavigator.
 7. Lược đồ 15 trường + `accessLevel` (mặc định và bắt buộc `free` ở giai đoạn này); quy ước `id` `MON-LL-CHUDE-NNN` và **các `id` đã đăng không đổi** (CONTENT_SCHEMA.md).
 8. Cấu trúc Thẻ Dẫn chứng 5 trường (bắt buộc có *Giới hạn sử dụng*) và tách khối trích dẫn nguyên văn khỏi diễn giải.
 9. Cách lưu dữ liệu: tệp TS `content/<môn>/<lớp>/` + đăng ký `content/index.ts` + sổ cái `CONTENT_REGISTRY.json`; `npm run validate` là cổng kiểm tra bắt buộc, kể cả trong workflow (P0-008, P0-012).

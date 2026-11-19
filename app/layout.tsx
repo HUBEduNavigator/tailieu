@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: { title, description, type: "website", locale: "vi_VN", siteName: "HUB EduNavigator" },
 };
 
-export const viewport: Viewport = { themeColor: "#0f2a4a", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#332372", width: "device-width", initialScale: 1 };
 
 const themeScript = `try{var t=localStorage.getItem('tailieu-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='light'}`;
 
@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
+      <body className="site-body">
         <a href="#main" className="skip">Bỏ qua để tới nội dung chính</a>
         <Header />
         <main id="main">{children}</main>
