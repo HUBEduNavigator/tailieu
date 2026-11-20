@@ -1,8 +1,20 @@
 {
   "$schema_note": "Sổ cái đăng ký học liệu. Mỗi đơn vị trong content/index.ts phải có đúng một mục ở đây; chạy `npm run validate` để đối chiếu.",
   "version": "0.1.0",
-  "updatedAt": "2026-11-19",
+  "updatedAt": "2026-11-20",
   "items": [
+    {
+      "id": "TOAN-06-SN-001",
+      "title": "Thực hiện phép tính trong tập hợp số nguyên, quy tắc dấu ngoặc và thứ tự thực hiện phép tính",
+      "subject": "toan",
+      "grade": 6,
+      "track": "nen-tang",
+      "difficulty": "thong-hieu",
+      "status": "verified",
+      "accessLevel": "free",
+      "filePath": "content/toan/06/phep-tinh-so-nguyen.ts",
+      "updatedAt": "2026-11-20"
+    },
     {
       "id": "TOAN-09-PTB2-001",
       "title": "Hệ thức Viète và bài toán tham số của phương trình bậc hai",

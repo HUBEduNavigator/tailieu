@@ -7,6 +7,7 @@ Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạ
 - Thiết kế riêng cho kho học liệu. Trang khám phá đưa tìm kiếm, danh sách tài liệu và lối tắt theo môn, lớp, kỳ thi vào cùng một bố cục.
 - Danh mục giữ từ khóa và bộ lọc trong URL. Bảng lọc trên điện thoại có thể thu gọn.
 - Trang đọc có mục lục riêng và liên kết nhanh đến phương pháp, ví dụ có lời giải và lỗi thường gặp.
+- Bổ sung bài Toán 6 `TOAN-06-SN-001` về phép tính số nguyên, quy tắc dấu ngoặc và thứ tự thực hiện phép tính.
 
 ## [0.1.0] – 2026-11-19 · `P0-TAILIEU-CORE`
 

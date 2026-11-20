@@ -5,12 +5,18 @@ import { SubjectIcon } from "@/components/SubjectIcon";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Rich, RichList } from "@/components/Rich";
 import { DIFFICULTY_INFO, SUBJECT_INFO, TRACK_INFO } from "@/lib/labels";
-import type { LearningUnit } from "@/lib/schema";
+import type { ContentStatus, LearningUnit } from "@/lib/schema";
 import { getSource } from "@/lib/sources";
 import { slugify } from "@/lib/text";
 import { BilingualView, ExerciseView, GrammarTableView, IpaView, VocabTableView } from "./AnhParts";
 import { IdLinks, Section, SourceName, WorkedExampleView } from "./common";
 import { EssayFrameView, EvidenceCardView } from "./VanParts";
+
+const STATUS_LABELS: Record<ContentStatus, string> = {
+  draft: "Bản nháp",
+  "seed-verified": "Đã tự kiểm (seed-verified)",
+  verified: "Đã thẩm định",
+};
 
 interface Sec {
   id: string;
@@ -157,7 +163,7 @@ export function UnitView({ unit }: { unit: LearningUnit }) {
       node: (
         <>
           <div className="callout">
-            <p className="font-semibold">Trạng thái: {unit.status === "seed-verified" ? "Dữ liệu mồi đã kiểm chứng (seed-verified)" : unit.status}</p>
+            <p className="font-semibold">Trạng thái: {STATUS_LABELS[unit.status]}</p>
             <p className="mt-1"><span className="font-semibold">Cách kiểm chứng: </span><Rich>{unit.verification.method}</Rich></p>
             {unit.verification.openItems.length > 0 && (
               <>

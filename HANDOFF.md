@@ -1,31 +1,31 @@
 # HANDOFF – Bàn giao nhiệm vụ
 
-_Cập nhật 2026-11-20 · Thiết kế lại giao diện kho học liệu_
+_Cập nhật 2026-11-20 · Đăng học liệu Toán 6 về phép tính số nguyên_
 
 ## (1) Giai đoạn hiện tại
 
-**Giai đoạn 1 (P0) – đã hoàn thành.** Giai đoạn 2–4 đang chờ (xem `TASK_QUEUE.md`). Phiên bản `v0.2.0` cập nhật giao diện thư viện.
+**Giai đoạn 1 (P0) đã hoàn thành.** Giai đoạn 2 đã đăng bài Toán 6 đầu tiên. Xem `TASK_QUEUE.md` để theo dõi các đợt tiếp theo.
 
 ## (2) Mã và tên nhiệm vụ gần nhất
 
-Thiết kế lại kho học liệu theo yêu cầu người dùng ngày 2026-11-20. Prompt `prompts/P0-TAILIEU-CORE.md` ghi yêu cầu gốc về dữ liệu, tra cứu và trình bày theo môn. Quyết định mới về thiết kế được ghi trong `DECISIONS_LOG.md`.
+`B1-M1-A` đưa bài Toán 6 `TOAN-06-SN-001` lên kho sau khi người dùng xác nhận đã đạt thẩm định. Bản đăng dùng nội dung học liệu từ JSON V3 và thông tin nguồn từ hồ sơ nghiên cứu V3. Prompt `prompts/P0-TAILIEU-CORE.md` ghi yêu cầu gốc về dữ liệu, tra cứu và trình bày theo môn.
 
 ## (3) Hạng mục đã hoàn thành và đã kiểm tra
 
-- Cập nhật trang khám phá, danh mục, trang môn và trang đọc. Các trang vẫn dùng URL dưới `/tailieu`.
-- `npm run check` đã kiểm tra TypeScript, 5 dạng bài, 398 công thức KaTeX, 11 nguồn và tạo bản tĩnh.
+- Đăng ký `TOAN-06-SN-001` với trạng thái `verified` và 5 nguồn mới. Ba bộ SGK được dẫn đến cấp chương theo thông tin hiện có.
+- `npm run check` đạt kiểm tra kiểu, kiểm tra 6 học liệu với 613 công thức KaTeX và xuất bản dựng tĩnh.
 - Bộ kiểm thử Chromium kiểm tra điều hướng, bố cục ở 375 px, tìm kiếm, các bộ lọc, mục lục, phông KaTeX và IPA, liên kết nội bộ và chế độ sáng/tối.
 - Xem commit và trạng thái triển khai trên GitHub để xác định phiên bản đang phục vụ.
 
 ## (4) Tệp, thư mục, trang vừa tạo hoặc sửa
 
-- `app/` chứa bố cục, màu, favicon, ảnh minh họa WebP và các trang đã thiết kế lại.
-- `components/` chứa điều hướng, tìm kiếm, bộ lọc, thẻ tài liệu và bố cục đọc.
-- `scripts/e2e-smoke.cjs` kiểm tra thêm tìm kiếm bằng Enter, đóng gợi ý bằng Escape, lọc trên điện thoại và liên kết đọc nhanh.
+- `content/toan/06/phep-tinh-so-nguyen.ts` chứa bài Toán 6. Bài được đăng ký trong `content/index.ts`, `CONTENT_REGISTRY.json` và `COVERAGE_MATRIX.csv`.
+- `SOURCE_REGISTRY.csv` ghi thông tin 3 bộ SGK và 2 bài báo tham khảo.
+- `scripts/e2e-smoke.cjs` kiểm tra hiển thị công thức của bài mới.
 
 ## (5) Dữ liệu và nguồn đã dùng
 
-Toàn bộ ở trạng thái `seed-verified` (tự kiểm; **chưa** qua thẩm định độc lập A ⇄ B):
+Bài `TOAN-06-SN-001` có 7 ví dụ, 4 biến thể và 5 lỗi thường gặp. Năm bài mẫu P0 có trạng thái `seed-verified`:
 
 | Mã | Nội dung | Cách kiểm |
 |---|---|---|
@@ -35,7 +35,7 @@ Toàn bộ ở trạng thái `seed-verified` (tự kiểm; **chưa** qua thẩm 
 | `ANH-06-PRON-001` | /ɪ/ vs /iː/ (bảng IPA, 7 cặp tối thiểu, quy luật chính tả + ngoại lệ, bài tập) | Tự rà soát theo quy ước từ điển; **chưa tra trực tuyến** |
 | `ANH-12-NOTICE-001` | Đọc điền thông báo 6 chỗ trống (văn bản gốc do biên soạn, ngữ pháp, từ nối, từ chỉ lượng) + bài luyện 5 câu | Tự rà soát; bản dịch tự dịch |
 
-Nguồn: 11 mục trong `SOURCE_REGISTRY.csv` (CT GDPT 2018 và 3 chương trình môn, Quyết định 764/QĐ-BGDĐT ngày 08/03/2024, Truyện Kiều, Bình Ngô đại cáo, tục ngữ, Cambridge Dictionary, Handbook of the IPA, biên soạn gốc HUB). Cột `verified_status` ghi trung thực mức đối chiếu của từng nguồn.
+Nguồn P0 gồm 11 mục trong `SOURCE_REGISTRY.csv` (CT GDPT 2018 và 3 chương trình môn, Quyết định 764/QĐ-BGDĐT ngày 08/03/2024, Truyện Kiều, Bình Ngô đại cáo, tục ngữ, Cambridge Dictionary, Handbook of the IPA, biên soạn gốc HUB). Cột `verified_status` ghi trung thực mức đối chiếu của từng nguồn.
 
 Giao diện kho dùng bảng màu và bố cục riêng theo quyết định ngày 2026-11-20 trong `DECISIONS_LOG.md`.
 
@@ -54,7 +54,7 @@ Giao diện kho dùng bảng màu và bố cục riêng theo quyết định ng�
 
 ## (7) Công việc đang dang dở
 
-Không có tệp dở dang. Những việc đã nêu ở mục 6 là việc kiểm chứng còn mở, không phải mã chưa viết xong. Chưa làm (ngoài phạm vi P0): thẩm định A ⇄ B cho seed, nạp học liệu mới, âm thanh IPA, chỉ mục tìm kiếm tách riêng.
+Không có tệp dở dang. Những việc đã nêu ở mục 6 là việc kiểm chứng còn mở, không phải mã chưa viết xong. Chưa làm (ngoài phạm vi P0): thẩm định A ⇄ B cho seed, lập kế hoạch phủ các bài tiếp theo, âm thanh IPA, chỉ mục tìm kiếm tách riêng.
 
 ## (8) Điều kiện, đầu vào để tiếp tục
 

@@ -5,7 +5,7 @@
  *   mkdir -p /tmp/site && ln -sfn "$PWD/out" /tmp/site/tailieu
  *   (cd /tmp/site && python3 -m http.server 4173 &)
  *   NODE_PATH=$(npm root -g) node scripts/e2e-smoke.cjs
- * Kết quả P0: 57/57 đạt (xem HANDOFF.md). Số kỳ vọng (5 đơn vị…) phải cập nhật khi thêm học liệu.
+ * Cập nhật số kết quả kỳ vọng khi thêm học liệu.
  */
 const { chromium } = require('playwright');
 const BASE = 'http://localhost:4173/tailieu';
@@ -53,7 +53,7 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       const o = await m.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth, bsw: document.body.scrollWidth }));
       ok(`375px không tràn ngang: ${u.replace(BASE,'')||'/'}`, o.sw <= o.iw+1 && o.bsw <= o.iw+1, `scrollWidth=${o.sw}/${o.iw}`);
     }
-    for (const slug of ['toan-09-ptb2-001','toan-12-cuctri-001','van-12-nlxh-001','anh-06-pron-001','anh-12-notice-001']) {
+    for (const slug of ['toan-06-sn-001','toan-09-ptb2-001','toan-12-cuctri-001','van-12-nlxh-001','anh-06-pron-001','anh-12-notice-001']) {
       for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
         await pg.goto(`${BASE}/bai/${slug}/`, { waitUntil: 'networkidle' });
         const info = await pg.evaluate(() => {
@@ -117,11 +117,11 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     // --- 4. Bộ lọc đa chiều ---
     await page.goto(`${BASE}/hoc-lieu/`, { waitUntil: 'networkidle' });
     const count = async () => (await page.locator('section[aria-label="Kết quả"] a.card').count());
-    ok('Catalog: 5 kết quả ban đầu', (await count())===5, String(await count()));
-    await page.getByRole('button', { name: 'Toán học', exact: true }).click(); ok('Lọc Toán → 2', (await count())===2);
+    ok('Catalog: 6 kết quả ban đầu', (await count())===6, String(await count()));
+    await page.getByRole('button', { name: 'Toán học', exact: true }).click(); ok('Lọc Toán → 3', (await count())===3);
     await page.getByRole('button', { name: '12', exact: true }).click(); ok('Toán + Lớp 12 → 1', (await count())===1);
     await page.getByRole('button', { name: 'Tuyển sinh lớp 10' }).click(); ok('Toán + 12 + TS10 → 0 và báo "Đang cập nhật theo lộ trình"', (await count())===0 && (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
-    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 5', (await count())===5);
+    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 6', (await count())===6);
     await page.getByRole('button', { name: 'Tốt nghiệp THPT' }).click(); ok('Nhóm TN THPT → 3 (Toán12, Văn12, Anh12)', (await count())===3, String(await count()));
     await page.getByRole('button', { name: 'Vận dụng', exact: true }).click(); ok('TN THPT + Vận dụng → 3', (await count())===3);
     await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click();
@@ -133,6 +133,13 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     await page.goto(`${BASE}/hoc-lieu/?lop=7`, { waitUntil: 'networkidle' });
     ok('Lớp 7 trống: thông báo "Đang cập nhật theo lộ trình"', (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
     await page.goto(`${BASE}/hoc-lieu/?mon=toan&lop=9&chude=phuong-trinh-bac-hai-mot-an`, { waitUntil: 'networkidle' }); ok('Breadcrumb chủ đề (chude slug) → 1', (await count())===1);
+
+    await page.goto(`${BASE}/hoc-lieu/?mon=toan&lop=6&nhom=nen-tang&q=so+nguyen`, { waitUntil: 'networkidle' });
+    const integerUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/toan-06-sn-001/"]');
+    ok('Lọc và tìm không dấu ra bài số nguyên lớp 6', (await count())===1 && (await integerUnit.count())===1);
+    await integerUnit.click();
+    await page.waitForURL('**/bai/toan-06-sn-001/');
+    ok('Bài số nguyên có đủ 7 ví dụ và nhãn thẩm định', (await page.locator('#vi-du article').count())===7 && (await page.locator('#nguon').innerText()).includes('Đã thẩm định'));
 
     await m.goto(`${BASE}/hoc-lieu/`, { waitUntil: 'networkidle' });
     const toggle = m.getByRole('button', { name: 'Bộ lọc', exact: true });

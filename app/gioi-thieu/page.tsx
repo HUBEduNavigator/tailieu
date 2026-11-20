@@ -36,7 +36,7 @@ export default function AboutPage() {
         <section>
           <h2 className="section-title">Mức độ kiểm chứng</h2>
           <p>
-            Hiện tại kho đang ở giai đoạn khởi tạo, chỉ đăng một vài dạng bài mẫu có nhãn <strong>seed-verified</strong>. Nhãn này nghĩa là dữ liệu đã được kiểm tra theo cách ghi rõ ở cuối từng bài (ví dụ: Toán được tính lại độc lập bằng đại số máy tính), kèm danh sách những điểm còn cần người đối chiếu. Chúng tôi không trích dẫn văn học hay nguồn mà chưa chắc xuất xứ, và không đăng lại nội dung sách giáo khoa có bản quyền.
+            Học liệu có nhãn <strong>Đã tự kiểm</strong> kèm cách kiểm tra và những điểm còn cần đối chiếu. Nhãn <strong>Đã thẩm định</strong> dành cho bài đã qua thẩm định. Thông tin kiểm chứng và nguồn tham khảo nằm ở cuối mỗi bài. Chúng tôi không trích dẫn văn học hay nguồn mà chưa chắc xuất xứ, và không đăng lại nội dung sách giáo khoa có bản quyền.
           </p>
         </section>
 

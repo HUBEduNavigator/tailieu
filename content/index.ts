@@ -1,4 +1,5 @@
 import type { LearningUnit } from "@/lib/schema";
+import { unit as toan06 } from "./toan/06/phep-tinh-so-nguyen";
 import { unit as toan09 } from "./toan/09/ptb2-viete-tham-so";
 import { unit as toan12 } from "./toan/12/cuc-tri-ham-bac-ba";
 import { unit as van12 } from "./van/12/nlxh-tai-va-tam";
@@ -10,4 +11,4 @@ import { unit as anh12 } from "./anh/12/doc-dien-thong-bao";
  * Thêm học liệu mới = tạo tệp dữ liệu trong content/<môn>/<lớp>/, import vào đây,
  * rồi ghi vào CONTENT_REGISTRY.json. Không cần sửa giao diện.
  */
-export const UNITS: LearningUnit[] = [toan09, toan12, van12, anh06, anh12];
+export const UNITS: LearningUnit[] = [toan06, toan09, toan12, van12, anh06, anh12];

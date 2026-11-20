@@ -8,6 +8,7 @@ Ký hiệu: ✅ xong · ⏭ kế tiếp · ⬜ chờ. Mã nhiệm vụ đặt th
 
 ## Giai đoạn 2 – Lập kế hoạch phủ và nạp đợt đầu ⏭
 
+- ✅ `B1-M1-A` đã đăng bài Toán 6 `TOAN-06-SN-001` về phép tính số nguyên sau khi người dùng xác nhận đạt thẩm định.
 - ⏭ `P2-COVERAGE-PLAN`: lập danh sách chủ đề/dạng bài cho từng môn × lớp × nhóm; điền `COVERAGE_MATRIX.csv` (`planned_count`). Cần chốt thứ tự ưu tiên với người dùng (đề xuất: lớp 9 và 12 trước vì gắn kỳ thi).
 - ⬜ `P2-VERIFY-SEED`: thẩm định độc lập A ⇄ B cho 5 đơn vị seed; xử lý `verification.openItems`; nâng `verified` nếu đạt (xem `HANDOFF.md` mục 6–7).
 - ⬜ `P2-AUDIO-IPA` (tùy chọn): nghiên cứu cách đưa âm thanh mẫu IPA hợp lệ (không vi phạm bản quyền).

@@ -1,4 +1,5 @@
 subject,grade,track,topic,planned_count,completed_count,verified_count,status,notes
+toan,6,nen-tang,Tập hợp các số nguyên,1,1,1,verified,TOAN-06-SN-001 đã qua thẩm định theo xác nhận của người dùng
 toan,6,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 toan,7,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 toan,8,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
