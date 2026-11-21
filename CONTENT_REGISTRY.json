@@ -52,6 +52,18 @@
       "updatedAt": "2026-11-19"
     },
     {
+      "id": "VAN-06-DHTR-001",
+      "title": "Đọc hiểu văn bản truyện với ngữ liệu ngoài sách giáo khoa",
+      "subject": "van",
+      "grade": 6,
+      "track": "nen-tang",
+      "difficulty": "thong-hieu",
+      "status": "verified",
+      "accessLevel": "free",
+      "filePath": "content/van/06/doc-hieu-van-ban-truyen.ts",
+      "updatedAt": "2026-11-21"
+    },
+    {
       "id": "VAN-12-NLXH-001",
       "title": "Nghị luận về tư tưởng đạo lí: mối quan hệ giữa tài và tâm",
       "subject": "van",

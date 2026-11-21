@@ -53,7 +53,7 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       const o = await m.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth, bsw: document.body.scrollWidth }));
       ok(`375px không tràn ngang: ${u.replace(BASE,'')||'/'}`, o.sw <= o.iw+1 && o.bsw <= o.iw+1, `scrollWidth=${o.sw}/${o.iw}`);
     }
-    for (const slug of ['toan-06-sn-001','toan-06-ch-001','toan-09-ptb2-001','toan-12-cuctri-001','van-12-nlxh-001','anh-06-pron-001','anh-06-gram-001','anh-12-notice-001']) {
+    for (const slug of ['toan-06-sn-001','toan-06-ch-001','toan-09-ptb2-001','toan-12-cuctri-001','van-06-dhtr-001','van-12-nlxh-001','anh-06-pron-001','anh-06-gram-001','anh-12-notice-001']) {
       for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
         await pg.goto(`${BASE}/bai/${slug}/`, { waitUntil: 'networkidle' });
         const info = await pg.evaluate(() => {
@@ -113,6 +113,7 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     // --- 3. Tìm kiếm có dấu / không dấu ---
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
     const searchTests = [['cực trị','TOAN-12-CUCTRI-001'],['cuc tri','TOAN-12-CUCTRI-001'],['VIETE','TOAN-09-PTB2-001'],['Viète','TOAN-09-PTB2-001'],['ANH-12','ANH-12-NOTICE-001'],['thong bao','ANH-12-NOTICE-001'],['tài tâm','VAN-12-NLXH-001'],['tai tam','VAN-12-NLXH-001'],['nghị luận','VAN-12-NLXH-001'],['đạo hàm','TOAN-12-CUCTRI-001'],['dao ham','TOAN-12-CUCTRI-001'],['thì hiện tại đơn','ANH-06-GRAM-001'],['thi hien tai don','ANH-06-GRAM-001'],['thừa số nguyên tố','TOAN-06-CH-001'],['thua so nguyen to','TOAN-06-CH-001']];
+    searchTests.push(['đọc hiểu văn bản truyện','VAN-06-DHTR-001'], ['doc hieu van ban truyen','VAN-06-DHTR-001']);
     for (const [q, expect] of searchTests) {
       await page.fill('#home-q', q); await page.waitForTimeout(80);
       const txt = await page.locator('[aria-live=polite] ul li').first().innerText();
@@ -143,11 +144,11 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     // --- 4. Bộ lọc đa chiều ---
     await page.goto(`${BASE}/hoc-lieu/`, { waitUntil: 'networkidle' });
     const count = async () => (await page.locator('section[aria-label="Kết quả"] a.card').count());
-    ok('Catalog: 8 kết quả ban đầu', (await count())===8, String(await count()));
+    ok('Catalog: 9 kết quả ban đầu', (await count())===9, String(await count()));
     await page.getByRole('button', { name: 'Toán học', exact: true }).click(); ok('Lọc Toán → 4', (await count())===4);
     await page.getByRole('button', { name: '12', exact: true }).click(); ok('Toán + Lớp 12 → 1', (await count())===1);
     await page.getByRole('button', { name: 'Tuyển sinh lớp 10' }).click(); ok('Toán + 12 + TS10 → 0 và báo "Đang cập nhật theo lộ trình"', (await count())===0 && (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
-    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 8', (await count())===8);
+    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 9', (await count())===9);
     await page.getByRole('button', { name: 'Tốt nghiệp THPT' }).click(); ok('Nhóm TN THPT → 3 (Toán12, Văn12, Anh12)', (await count())===3, String(await count()));
     await page.getByRole('button', { name: 'Vận dụng', exact: true }).click(); ok('TN THPT + Vận dụng → 3', (await count())===3);
     await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click();
@@ -204,6 +205,34 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       await firstExercise.getByText('Xem đáp án và giải thích').first().click();
       ok(`ANH-06-GRAM-001 (${label}): đủ ba bộ bài tập và mở được lời giải`,
         (await exercises.count())===3 && await firstExercise.getByText('Đáp án: C.', { exact: true }).first().isVisible());
+    }
+
+    await page.goto(`${BASE}/hoc-lieu/?mon=van&lop=6&nhom=nen-tang`, { waitUntil: 'networkidle' });
+    const readingUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/van-06-dhtr-001/"]');
+    ok('Lọc Ngữ văn 6 Nền tảng trả về VAN-06-DHTR-001', (await count())===1 && (await readingUnit.count())===1);
+    for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
+      const response = await pg.goto(`${BASE}/bai/van-06-dhtr-001/`, { waitUntil: 'networkidle' });
+      const examples = pg.locator('#vi-du article');
+      ok(`VAN-06-DHTR-001 (${label}): trang tĩnh có bốn ví dụ và nhãn thẩm định`,
+        response?.status()===200 && (await examples.count())===4
+        && (await pg.locator('#nguon').innerText()).includes('Đã thẩm định'));
+      const quotes = examples.locator('figure.quote-box');
+      const firstQuote = quotes.first().locator('blockquote');
+      ok(`VAN-06-DHTR-001 (${label}): ba đoạn nguyên văn tách khối, giữ nguồn và xuống dòng`,
+        (await quotes.count())===3 && await firstQuote.isVisible()
+        && (await firstQuote.textContent()).includes('\n\n– Mình sẽ làm một tấm biển.')
+        && (await quotes.first().innerText()).includes('Tấm biển ở đầu ngõ — truyện ngắn biên soạn gốc'));
+      ok(`VAN-06-DHTR-001 (${label}): khung đọc hiểu có đủ năm phần`,
+        (await pg.locator('#khung-bai-viet ol > li').count())===5);
+      const cards = await pg.locator('#dan-chung article').all();
+      const cardIds = await Promise.all(cards.map(card => card.locator('.eyebrow span').textContent()));
+      const complete = await Promise.all(cards.map(async card => {
+        const fields = await card.locator('dt').allTextContents();
+        return fields.join('|')==='1. Xuất xứ|2. Nội dung cốt lõi|3. Ý nghĩa|4. Chủ đề vận dụng'
+          && await card.locator('.callout-warn').getByText('5. Giới hạn sử dụng', { exact: true }).isVisible();
+      }));
+      ok(`VAN-06-DHTR-001 (${label}): hai thẻ đủ năm mục và có khối Giới hạn sử dụng`,
+        cardIds.join(' ')==='DC-VAN-06-001 DC-VAN-06-002' && complete.every(Boolean));
     }
 
     // --- 5. Breadcrumb + TOC + liên kết tiên quyết ---

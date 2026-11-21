@@ -10,7 +10,7 @@ toan,10,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,G
 toan,11,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 toan,12,tot-nghiep-thpt,Ứng dụng đạo hàm – Cực trị,1,1,0,seed-verified,TOAN-12-CUCTRI-001: seed-verified (tự kiểm); chưa thẩm định độc lập A⇄B nên verified_count = 0
 toan,12,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
-van,6,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
+van,6,nen-tang,Đọc hiểu văn bản truyện,1,1,1,verified,VAN-06-DHTR-001 đã thẩm định độc lập B2-B
 van,7,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 van,8,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 van,9,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này

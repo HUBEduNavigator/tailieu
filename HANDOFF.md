@@ -1,32 +1,37 @@
 # HANDOFF – Bàn giao nhiệm vụ
 
-_Cập nhật 2026-11-21 · Tích hợp học liệu Toán 6 Đợt 4_
+_Cập nhật 2026-11-21 · Hợp nhất học liệu Đợt 2–4_
 
 ## (1) Giai đoạn hiện tại
 
-**Giai đoạn 1 (P0) đã hoàn thành.** Trong giai đoạn 2, bài Toán 6 về số nguyên đã được đăng và Đợt 4 đã được tích hợp trên nhánh B4-C. Nhánh có 7 học liệu. Xem `TASK_QUEUE.md` để theo dõi các đợt tiếp theo.
+**Giai đoạn 1 (P0) đã hoàn thành.** Trong giai đoạn 2, bài Toán 6 về số nguyên đã được đăng và các đợt 2–4 đã được hợp nhất. Bản hợp nhất có 9 học liệu. Xem `TASK_QUEUE.md` để theo dõi các đợt tiếp theo.
 
 ## (2) Mã và tên nhiệm vụ gần nhất
 
-`B4-C` tích hợp `TOAN-06-CH-001` về phân tích thừa số nguyên tố, ƯCLN, BCNN và bài toán thực tế. Người dùng xác nhận bản đính kèm đã đạt thẩm định độc lập. Nhánh `feat/toan-06-ch-001` bắt đầu từ `main` tại `aaab07e`.
+`B2-C` tích hợp `VAN-06-DHTR-001` về đọc hiểu văn bản truyện sau khi người dùng xác nhận đã đạt kiểm tra chéo Gemini. Bản phát hành cũng hợp nhất nhánh `feat/anh-06-gram-001` (B3-C) và nhánh `feat/toan-06-ch-001` (B4-C) từ nền `main` tại `aaab07e`.
 
 ## (3) Hạng mục đã hoàn thành và đã kiểm tra
 
-- Đăng ký `TOAN-06-CH-001` ở trạng thái `verified`, mức truy cập `free`. Cả hai danh sách liên kết trong `relatedIds` rỗng theo bản nghiệm thu.
-- `npm run validate` trả mã 0 với 7 học liệu, 19 nguồn, 751 công thức KaTeX và 7 mục sổ cái.
-- `npm run build` trả mã 0 và sinh `out/bai/toan-06-ch-001/index.html` với `basePath` là `/tailieu`. `npm run typecheck` cũng đạt.
-- `node scripts/e2e-smoke.cjs` trả mã 0, **78/78** kiểm tra đạt. Chromium xác nhận trang mới hiển thị 138 công thức KaTeX trên máy tính và ở 375 px, cuộn được dãy số nguyên tố trên di động và tìm được bài qua bộ lọc và từ khóa có dấu hoặc không dấu.
-- Kích thước danh sách kiến thức trọng tâm của sáu bài có sẵn khớp với bản `main` ở cả 375 và 1280 px.
-- Sau khi merge, xem lượt chạy GitHub Actions và kiểm tra trang công khai tại <https://hubedunavigator.github.io/tailieu/bai/toan-06-ch-001/>.
+- Ba bài đợt 2–4 đã đăng ký ở trạng thái `verified`, mức truy cập `free`.
+- `npm run check` đạt kiểm tra kiểu, kiểm tra 9 học liệu với 25 nguồn và 751 công thức KaTeX, rồi xuất tĩnh thành công cả ba trang.
+- `node scripts/e2e-smoke.cjs` đạt **108/108** trên Chromium. Đã kiểm tra nội dung và hiển thị trên máy tính và ở 375 px, tìm kiếm và bộ lọc của cả ba bài, cùng kiểm thử hồi quy các bài có sẵn.
+- GitHub Pages xuất bản theo workflow `Deploy to GitHub Pages` khi cập nhật `main`. Các trang đích gồm [Ngữ văn 6](https://hubedunavigator.github.io/tailieu/bai/van-06-dhtr-001/), [Tiếng Anh 6](https://hubedunavigator.github.io/tailieu/bai/anh-06-gram-001/) và [Toán 6](https://hubedunavigator.github.io/tailieu/bai/toan-06-ch-001/).
 
 ## (4) Tệp, thư mục, trang vừa tạo hoặc sửa
 
-- Tạo `content/toan/06/ucln-bcnn-bai-toan-thuc-te.ts` và đăng ký trong `content/index.ts`.
+- Hợp nhất và đăng ký ba tệp trong `content/index.ts`:
+  - `content/van/06/doc-hieu-van-ban-truyen.ts`
+  - `content/anh/06/hien-tai-don-trang-tu-tan-suat-duoi-s-es.ts`
+  - `content/toan/06/ucln-bcnn-bai-toan-thuc-te.ts`
 - Cập nhật `SOURCE_REGISTRY.csv`, `CONTENT_REGISTRY.json`, `COVERAGE_MATRIX.csv`, `PROJECT_STATE.md`, `TASK_QUEUE.md`, `PROMPT_INDEX.md`, `CHANGELOG.md` và `HANDOFF.md`.
 - Điều chỉnh `app/globals.css` để giới hạn cuộn ngang trong danh sách kiến thức trọng tâm khi công thức quá dài.
-- Mở rộng `scripts/e2e-smoke.cjs` để kiểm tra công thức, tìm kiếm và bộ lọc của bài mới.
+- Hợp nhất `scripts/e2e-smoke.cjs` để kiểm tra hiển thị, tìm kiếm và bộ lọc của cả ba bài.
 
 ## (5) Dữ liệu và nguồn đã dùng
+
+Bài `VAN-06-DHTR-001` có hai truyện biên soạn gốc, bốn ví dụ, khung đọc hiểu và hai thẻ diễn giải. Dùng lại `SRC-GDPT-2018`, `SRC-CT-VAN` và `SRC-HUB-ORIG`. Các mã mới của Đợt 2 gồm `SRC-CV-3175`, `SRC-VAN-TOHOAI-DMPLK` và `SRC-VAN-THACHLAM-GLDM`.
+
+Bài `ANH-06-GRAM-001` có bốn ví dụ có lời giải, bảy ví dụ song ngữ và ba bộ bài tập. Các mã mới của Đợt 3 gồm `SRC-OXFORD-OALD`, `SRC-EOL-ALLOMORPHY` và `SRC-UCR-NETGRAMMAR`.
 
 Bài `TOAN-06-CH-001` dùng nguyên khối dữ liệu `MathUnit` đã nghiệm thu, gồm năm ví dụ thuộc năm định dạng. Ngân hàng tự luyện và lời giải mở rộng được lưu trong hồ sơ đính kèm ở phần riêng sau khối `MathUnit`.
 
@@ -58,11 +63,12 @@ Giao diện kho dùng bảng màu và bố cục riêng theo quyết định ng�
 8. `META_PROMPT_FINAL.md` mới là tệp giữ chỗ (người dùng chưa dán nội dung).
 9. Văn chỉ có 1 đơn vị seed (đề cho phép 1–2) do không kiểm chứng được nguyên văn thơ ngoài SGK.
 10. Mục tiêu (`objectives`) diễn đạt theo tinh thần yêu cầu cần đạt, chưa đối chiếu từng câu với văn bản chương trình gốc.
-11. Tại thời điểm tích hợp B4-C, `VAN-06-DHTR-001` chưa có trên `main`. `ANH-06-GRAM-001` đang ở nhánh `feat/anh-06-gram-001`.
+11. Bản B2-A có nêu khác biệt câu chữ giữa các bản lưu hành của Con Rồng cháu Tiên. Bản B2-B đã thay ngữ liệu đó bằng truyện biên soạn gốc nên việc đối chiếu bản in 2017 chỉ cần thiết nếu tái sử dụng bản kể cũ.
+12. Hai thẻ dẫn chứng dùng diễn giải, có nguồn đối chiếu. Nếu bổ sung trích dẫn nguyên văn sau này, cần chọn bản in cụ thể, đối chiếu từng chữ và dấu câu, đồng thời kiểm tra quyền sử dụng.
 
 ## (7) Công việc đang dang dở
 
-Còn bước merge B4-C vào `main` và xác nhận triển khai GitHub Pages. Theo dõi B2-C và B3-C riêng trong `TASK_QUEUE.md`. Các việc còn mở từ P0 gồm thẩm định A ⇄ B cho seed, lập kế hoạch phủ, âm thanh IPA và chỉ mục tìm kiếm tách riêng.
+Trạng thái xuất bản được theo dõi qua GitHub Actions. Các việc còn mở từ P0 gồm thẩm định A ⇄ B cho seed, lập kế hoạch phủ, âm thanh IPA và chỉ mục tìm kiếm tách riêng.
 
 ## (8) Điều kiện, đầu vào để tiếp tục
 
@@ -75,8 +81,7 @@ Còn bước merge B4-C vào `main` và xác nhận triển khai GitHub Pages. T
 ## (9) Mã nhiệm vụ và prompt cần chạy kế tiếp
 
 1. **`B5` – Đợt 5**. Dùng `prompts/RESUME_PROJECT_PROMPT.md` khi đã chốt chủ đề và đầu vào. Ghi các bước A–B–C trong `PROMPT_INDEX.md`.
-2. **`B2-C`** tiếp tục khi có xác nhận nghiệm thu cho bài Ngữ văn 6. **`B3-C`** tiếp tục theo nhánh Tiếng Anh 6.
-3. **`P2-VERIFY-SEED`** và **`P2-COVERAGE-PLAN`** tiếp tục theo `TASK_QUEUE.md`.
+2. **`P2-VERIFY-SEED`** và **`P2-COVERAGE-PLAN`** tiếp tục theo `TASK_QUEUE.md`.
 
 ## (10) Phần đã chốt – KHÔNG làm lại, KHÔNG tự ý sửa
 
@@ -94,4 +99,4 @@ Chỉ sửa khi người dùng ra quyết định mới và ghi vào `DECISIONS_
 10. Quy tắc minh bạch kiểm chứng: nhãn `seed-verified` luôn kèm `verification.openItems`; không nâng `verified` khi chưa có thẩm định độc lập (P0-010).
 11. Quy tắc “Đang cập nhật theo lộ trình” thay cho liên kết tới trang chưa có; không có nút chết.
 12. Năm đơn vị seed `TOAN-09-PTB2-001`, `TOAN-12-CUCTRI-001`, `VAN-12-NLXH-001`, `ANH-06-PRON-001`, `ANH-12-NOTICE-001`: chỉ sửa để vá lỗi kiểm chứng ở `P2-VERIFY-SEED`, không viết lại.
-13. Giữ nguyên phép tính, phương pháp và đáp án đã thẩm định của `TOAN-06-SN-001` và `TOAN-06-CH-001`. Giữ nguyên nội dung đã chốt của `ANH-06-GRAM-001` khi đưa nhánh Đợt 3 vào `main`.
+13. Giữ nguyên nội dung đã thẩm định của `TOAN-06-SN-001`, `VAN-06-DHTR-001`, `ANH-06-GRAM-001` và `TOAN-06-CH-001`, gồm phép tính, phương pháp, trích dẫn, dẫn chứng, phiên âm, bản dịch và đáp án.

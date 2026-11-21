@@ -2,15 +2,15 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạng YYYY-MM-DD.
 
-## [Chưa phát hành] – Đợt 4
+## [Chưa phát hành] – Đợt 2–4
 
 - Bổ sung bài Toán 6 `TOAN-06-CH-001` về phân tích thừa số nguyên tố, ƯCLN, BCNN và bài toán thực tế, gồm 5 ví dụ có lời giải.
 - Cập nhật căn cứ chương trình, hồ sơ nguồn và kiểm thử trình duyệt cho công thức, tìm kiếm và bộ lọc của bài mới.
 - Cho phép cuộn ngang trong danh sách kiến thức trọng tâm khi công thức dài hơn vùng đọc.
-## [Chưa phát hành] – Đợt 3
-
 - Bổ sung học liệu Tiếng Anh 6 `ANH-06-GRAM-001` về thì hiện tại đơn, trạng từ chỉ tần suất và cách phát âm đuôi -s/-es. Học liệu có bảng IPA, ngữ pháp, từ vựng, ví dụ Anh–Việt và bài tập có đáp án.
 - Bổ sung kiểm thử trình duyệt cho trang học liệu, tìm kiếm tiếng Việt và bộ lọc Tiếng Anh 6.
+- Bổ sung bài Ngữ văn 6 `VAN-06-DHTR-001` về đọc hiểu văn bản truyện với ngữ liệu ngoài sách giáo khoa, gồm hai truyện biên soạn gốc, bốn ví dụ, khung đọc hiểu và hai Thẻ Dẫn chứng.
+- Kiểm thử trích dẫn nguyên văn, Thẻ Dẫn chứng, tìm kiếm và bộ lọc Ngữ văn 6 trên bản xuất tĩnh.
 
 ## [0.2.0] – 2026-11-20
 
