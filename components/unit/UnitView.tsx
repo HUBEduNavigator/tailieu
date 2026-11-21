@@ -220,7 +220,7 @@ export function UnitView({ unit }: { unit: LearningUnit }) {
       <header className="reader-header">
         <div className="reader-kicker">
           <SubjectIcon subject={t.subject} />
-          <p>{subj.name} · Lớp {t.grade} <span className="block font-mono text-xs text-muted">{unit.id}</span></p>
+          <p>{subj.name} · Lớp {t.grade}</p>
         </div>
         <h1>{unit.title}</h1>
         <p className="reader-summary">{unit.summary}</p>

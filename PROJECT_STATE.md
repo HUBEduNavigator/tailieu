@@ -17,7 +17,7 @@ _Cập nhật: 2026-11-21 · Phiên bản phát hành: v0.2.0_
 
 ## Giao diện kho học liệu
 
-Trang khám phá, danh mục, trang môn và trang đọc dùng bố cục riêng cho thư viện. Các đường dẫn công khai, dữ liệu và mức kiểm chứng của 5 dạng bài được giữ theo P0.
+Trang chủ mở bằng một tình huống làm bài, sau đó dẫn vào ba môn và sáu chuyên mục có câu hỏi tương tác. Mỗi chuyên mục có phản hồi theo lựa chọn, gợi ý, cách làm và giới hạn áp dụng. Danh mục giữ bộ lọc theo lớp và đường dẫn đến chín bài đã xuất bản.
 
 ## Kho học liệu hiện có
 

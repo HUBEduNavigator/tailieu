@@ -2,6 +2,12 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạng YYYY-MM-DD.
 
+## 2026-11-21 · Giao diện thực hành
+
+- Đưa tình huống thử nghiệm ngoại lai lên trang chủ và xếp chuyên mục theo ba môn với điều hướng truy cập từ mọi trang.
+- Thêm lựa chọn và phản hồi giải thích vào sáu tình huống. Mỗi thử thách có gợi ý, lời giải, giới hạn áp dụng và đường dẫn đọc tiếp.
+- Chuyển bảng màu sang xanh đêm, trắng ngà và cam đồng.
+
 ## 2026-11-21 · Cẩm nang làm bài thi
 
 - Mở sáu chuyên mục thuộc ba môn với tình huống tự thử, gợi ý, lời giải và giới hạn áp dụng. Trang chủ dùng bảng màu xanh mực và xanh ngọc.

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: { title, description, type: "website", locale: "vi_VN", siteName: "HUB EduNavigator" },
 };
 
-export const viewport: Viewport = { themeColor: "#102f42", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#182b45", width: "device-width", initialScale: 1 };
 
 const themeScript = `try{var t=localStorage.getItem('tailieu-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='light'}`;
 

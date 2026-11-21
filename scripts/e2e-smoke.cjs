@@ -63,7 +63,7 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       await answer.locator('summary').focus();
       await m.keyboard.press('Enter');
       ok('Mở lời giải bằng bàn phím: '+url.replace(BASE,''), hiddenInitially && await limit.isVisible());
-      const reading = m.locator('article > a.guide-link');
+      const reading = m.locator('[data-guide-reading]');
       const destination = new URL(await reading.getAttribute('href'), url);
       await reading.click();
       await m.waitForURL(destination.href);
@@ -71,6 +71,19 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       const anchor = new URL(m.url()).hash;
       ok('Đọc tiếp đúng tài liệu và mục: '+url.replace(BASE,''), m.url().includes('/bai/') && (!anchor || await m.locator(anchor).count() === 1));
     }
+    await page.goto(BASE + '/');
+    await page.getByRole('link', { name: 'Thử chọn nghiệm' }).click();
+    await page.getByRole('button', { name: 'Giữ cả 2 và −1' }).click();
+    const feedback = page.locator('.practice-feedback');
+    ok('Thử nghiệm ngoại lai: phản hồi giải thích phương án sai', (await feedback.innerText()).includes('Thử lại.'));
+    const correctChoice = page.getByRole('button', { name: 'Chỉ giữ 2' });
+    await correctChoice.focus();
+    await page.keyboard.press('Space');
+    ok('Thử nghiệm ngoại lai: đổi đáp án bằng bàn phím nhận phản hồi đúng',
+      (await correctChoice.getAttribute('aria-pressed')) === 'true' && (await feedback.innerText()).includes('Đúng.'));
+    await page.getByRole('link', { name: 'Nhận dạng và loại phương án' }).click();
+    await page.waitForURL('**/loai-phuong-an/');
+    ok('Chuyển chuyên mục bắt đầu lượt thử mới', await page.locator('.practice-choices [aria-pressed="true"]').count() === 0);
     for (const slug of ['toan-06-sn-001','toan-06-ch-001','toan-09-ptb2-001','toan-12-cuctri-001','van-06-dhtr-001','van-12-nlxh-001','anh-06-pron-001','anh-06-gram-001','anh-12-notice-001']) {
       for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
         await pg.goto(`${BASE}/bai/${slug}/`, { waitUntil: 'networkidle' });
