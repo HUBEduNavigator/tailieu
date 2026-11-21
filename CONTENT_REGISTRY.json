@@ -16,6 +16,18 @@
       "updatedAt": "2026-11-20"
     },
     {
+      "id": "TOAN-06-CH-001",
+      "title": "Phân tích một số ra thừa số nguyên tố, tìm ƯCLN – BCNN và giải bài toán thực tế",
+      "subject": "toan",
+      "grade": 6,
+      "track": "nen-tang",
+      "difficulty": "thong-hieu",
+      "status": "verified",
+      "accessLevel": "free",
+      "filePath": "content/toan/06/ucln-bcnn-bai-toan-thuc-te.ts",
+      "updatedAt": "2026-11-21"
+    },
+    {
       "id": "TOAN-09-PTB2-001",
       "title": "Hệ thức Viète và bài toán tham số của phương trình bậc hai",
       "subject": "toan",

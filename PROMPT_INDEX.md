@@ -8,6 +8,9 @@
 | `B3-A` | Nghiên cứu và soạn học liệu hiện tại đơn, tần suất và đuôi -s/-es | Hồ sơ nghiên cứu Đợt 3 | Đã có bản học liệu bàn giao |
 | `B3-B` | Thẩm định độc lập, đối chiếu nguồn, IPA, bản dịch và đáp án | Hồ sơ nghiệm thu Đợt 3 | Người dùng xác nhận đạt |
 | `B3-C` | Tích hợp `ANH-06-GRAM-001`, đồng bộ sổ cái và kiểm thử bản xuất tĩnh | Yêu cầu tích hợp và tệp học liệu do người dùng cung cấp | Đã chạy bằng Codex ngày 2026-11-21 trên nhánh `feat/anh-06-gram-001` |
+| `B4-A` | Nghiên cứu và soạn học liệu về thừa số nguyên tố, ƯCLN và BCNN | Bản nháp được dẫn trong hồ sơ Đợt 4 | Đã chuyển sang thẩm định |
+| `B4-B` | Tính lại các ví dụ, đối chiếu chương trình, nguồn và dữ liệu MathUnit | Hồ sơ `TOAN-06-CH-001-B4-B` do người dùng cung cấp | Người dùng xác nhận đạt |
+| `B4-C` | Tích hợp `TOAN-06-CH-001`, đồng bộ sổ cái và kiểm thử bản xuất tĩnh | Yêu cầu tích hợp Đợt 4 | Đã chạy bằng Codex ngày 2026-11-21 trên nhánh `feat/toan-06-ch-001` |
 
 ## Khung chờ các đợt A–B–C (Giai đoạn 2 trở đi)
 

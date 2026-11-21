@@ -95,6 +95,8 @@ a { text-underline-offset: 3px; }
 
 .prose-list { padding-left: 1.4rem; display: grid; gap: .4rem; }
 .prose-list li::marker { color: var(--accent-text); }
+/* Công thức nội dòng dài trong kiến thức trọng tâm cuộn trong danh sách. */
+.reader-paper #trong-tam .prose-list { grid-template-columns: minmax(0, 1fr); overflow-x: auto; }
 
 @layer components {
   .btn {
