@@ -3,7 +3,7 @@
  * Cách chạy (cần Playwright sẵn có, KHÔNG phải dependency của dự án):
  *   NEXT_PUBLIC_BASE_PATH=/tailieu npm run build
  *   mkdir -p /tmp/site && ln -sfn "$PWD/out" /tmp/site/tailieu
- *   (cd /tmp/site && python3 -m http.server 4173 &)
+ *   (cd /tmp/site && python3 -m http.server 4173 --protocol HTTP/1.1 &)
  *   NODE_PATH=$(npm root -g) node scripts/e2e-smoke.cjs
  * Cập nhật số kết quả kỳ vọng khi thêm học liệu.
  */
@@ -53,7 +53,7 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       const o = await m.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth, bsw: document.body.scrollWidth }));
       ok(`375px không tràn ngang: ${u.replace(BASE,'')||'/'}`, o.sw <= o.iw+1 && o.bsw <= o.iw+1, `scrollWidth=${o.sw}/${o.iw}`);
     }
-    for (const slug of ['toan-06-sn-001','toan-09-ptb2-001','toan-12-cuctri-001','van-12-nlxh-001','anh-06-pron-001','anh-12-notice-001']) {
+    for (const slug of ['toan-06-sn-001','toan-09-ptb2-001','toan-12-cuctri-001','van-12-nlxh-001','anh-06-pron-001','anh-06-gram-001','anh-12-notice-001']) {
       for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
         await pg.goto(`${BASE}/bai/${slug}/`, { waitUntil: 'networkidle' });
         const info = await pg.evaluate(() => {
@@ -93,12 +93,19 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
 
     // --- 3. Tìm kiếm có dấu / không dấu ---
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-    const searchTests = [['cực trị','TOAN-12-CUCTRI-001'],['cuc tri','TOAN-12-CUCTRI-001'],['VIETE','TOAN-09-PTB2-001'],['Viète','TOAN-09-PTB2-001'],['phát âm','ANH-06-PRON-001'],['phat am','ANH-06-PRON-001'],['ANH-12','ANH-12-NOTICE-001'],['thong bao','ANH-12-NOTICE-001'],['tài tâm','VAN-12-NLXH-001'],['tai tam','VAN-12-NLXH-001'],['nghị luận','VAN-12-NLXH-001'],['đạo hàm','TOAN-12-CUCTRI-001'],['dao ham','TOAN-12-CUCTRI-001']];
+    const searchTests = [['cực trị','TOAN-12-CUCTRI-001'],['cuc tri','TOAN-12-CUCTRI-001'],['VIETE','TOAN-09-PTB2-001'],['Viète','TOAN-09-PTB2-001'],['ANH-12','ANH-12-NOTICE-001'],['thong bao','ANH-12-NOTICE-001'],['tài tâm','VAN-12-NLXH-001'],['tai tam','VAN-12-NLXH-001'],['nghị luận','VAN-12-NLXH-001'],['đạo hàm','TOAN-12-CUCTRI-001'],['dao ham','TOAN-12-CUCTRI-001'],['thì hiện tại đơn','ANH-06-GRAM-001'],['thi hien tai don','ANH-06-GRAM-001']];
     for (const [q, expect] of searchTests) {
       await page.fill('#home-q', q); await page.waitForTimeout(80);
       const txt = await page.locator('[aria-live=polite] ul li').first().innerText();
       const first = await page.locator('[aria-live=polite] ul li a').first().getAttribute('href');
       ok(`Tìm trang chủ "${q}" → kết quả đầu là ${expect}`, first.endsWith('/'+expect.toLowerCase()+'/'), txt.slice(0,80).replace(/\n/g,' | '));
+    }
+    for (const q of ['phát âm', 'phat am']) {
+      await page.fill('#home-q', q);
+      const links = page.locator('[aria-live=polite] ul li a');
+      ok(`Tìm trang chủ "${q}" → có cả hai bài phát âm Tiếng Anh 6`,
+        (await links.and(page.locator('a[href$="/bai/anh-06-pron-001/"]')).count())===1
+        && (await links.and(page.locator('a[href$="/bai/anh-06-gram-001/"]')).count())===1);
     }
     await page.fill('#home-q', 'zzzxxx'); await page.waitForTimeout(80);
     ok('Tìm không có kết quả hiện thông báo minh bạch', (await page.locator('[aria-live=polite]').first().innerText()).includes('cập nhật theo lộ trình'));
@@ -117,11 +124,11 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     // --- 4. Bộ lọc đa chiều ---
     await page.goto(`${BASE}/hoc-lieu/`, { waitUntil: 'networkidle' });
     const count = async () => (await page.locator('section[aria-label="Kết quả"] a.card').count());
-    ok('Catalog: 6 kết quả ban đầu', (await count())===6, String(await count()));
+    ok('Catalog: 7 kết quả ban đầu', (await count())===7, String(await count()));
     await page.getByRole('button', { name: 'Toán học', exact: true }).click(); ok('Lọc Toán → 3', (await count())===3);
     await page.getByRole('button', { name: '12', exact: true }).click(); ok('Toán + Lớp 12 → 1', (await count())===1);
     await page.getByRole('button', { name: 'Tuyển sinh lớp 10' }).click(); ok('Toán + 12 + TS10 → 0 và báo "Đang cập nhật theo lộ trình"', (await count())===0 && (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
-    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 6', (await count())===6);
+    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 7', (await count())===7);
     await page.getByRole('button', { name: 'Tốt nghiệp THPT' }).click(); ok('Nhóm TN THPT → 3 (Toán12, Văn12, Anh12)', (await count())===3, String(await count()));
     await page.getByRole('button', { name: 'Vận dụng', exact: true }).click(); ok('TN THPT + Vận dụng → 3', (await count())===3);
     await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click();
@@ -129,7 +136,13 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click();
     await page.locator('#q').pressSequentially('cuc tri');
     ok('Catalog tìm "cuc tri" → 1', (await page.inputValue('#q'))==='cuc tri' && (await count())===1);
-    await page.goto(`${BASE}/hoc-lieu/?mon=anh&lop=6`, { waitUntil: 'networkidle' }); ok('URL ?mon=anh&lop=6 → 1', (await count())===1);
+    await page.goto(`${BASE}/hoc-lieu/?mon=anh&lop=6`, { waitUntil: 'networkidle' });
+    ok('URL ?mon=anh&lop=6 → 2', (await count())===2);
+    await page.getByRole('button', { name: 'Nền tảng', exact: true }).click();
+    await page.fill('#q', 'thi hien tai don');
+    const grammarUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/anh-06-gram-001/"]');
+    ok('Lọc Tiếng Anh 6 Nền tảng và tìm không dấu ra ANH-06-GRAM-001',
+      (await count())===1 && (await grammarUnit.count())===1 && new URL(page.url()).searchParams.get('nhom')==='nen-tang');
     await page.goto(`${BASE}/hoc-lieu/?lop=7`, { waitUntil: 'networkidle' });
     ok('Lớp 7 trống: thông báo "Đang cập nhật theo lộ trình"', (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
     await page.goto(`${BASE}/hoc-lieu/?mon=toan&lop=9&chude=phuong-trinh-bac-hai-mot-an`, { waitUntil: 'networkidle' }); ok('Breadcrumb chủ đề (chude slug) → 1', (await count())===1);
@@ -146,7 +159,31 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
     ok('Bộ lọc thu gọn lúc mở danh mục trên điện thoại', (await toggle.getAttribute('aria-expanded'))==='false');
     await toggle.click();
     await m.getByRole('button', { name: 'Tiếng Anh', exact: true }).click();
-    ok('Mở bộ lọc di động và lọc Tiếng Anh → 2', (await m.locator('section[aria-label="Kết quả"] a.card').count())===2);
+    ok('Mở bộ lọc di động và lọc Tiếng Anh → 3', (await m.locator('section[aria-label="Kết quả"] a.card').count())===3);
+
+    for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
+      const response = await pg.goto(`${BASE}/bai/anh-06-gram-001/`, { waitUntil: 'networkidle' });
+      ok(`ANH-06-GRAM-001 (${label}): trang xuất tĩnh trả 200 và có nhãn thẩm định`,
+        response?.status()===200 && (await pg.locator('#nguon').innerText()).includes('Đã thẩm định'));
+      const ipa = pg.locator('#ipa');
+      const ipaSounds = await ipa.locator('article [lang="en-fonipa"]').allTextContents();
+      const goes = ipa.getByRole('row').filter({ has: pg.getByRole('rowheader', { name: 'goes', exact: true }) });
+      ok(`ANH-06-GRAM-001 (${label}): đủ ba âm, năm bảng IPA và giữ khác biệt Anh–Anh/Anh–Mỹ`,
+        ipaSounds.join(' ') === '/s/ /z/ /ɪz/' && (await ipa.getByRole('table').count())===5
+        && (await goes.locator('[lang="en-fonipa"]').allTextContents()).join(' ') === '/ɡəʊz/ /ɡoʊz/');
+      ok(`ANH-06-GRAM-001 (${label}): đủ bốn bảng ngữ pháp và hai bảng từ vựng`,
+        (await pg.locator('#ngu-phap table').count())===4 && (await pg.locator('#tu-vung table').count())===2);
+      const bilingual = pg.locator('#anh-viet li');
+      ok(`ANH-06-GRAM-001 (${label}): đủ bảy ví dụ song ngữ và có bản dịch`,
+        (await bilingual.count())===7
+        && await bilingual.filter({ hasText: 'Nam is usually ready for school by seven.' })
+          .getByText('Đến bảy giờ, Nam thường đã sẵn sàng đi học.', { exact: true }).isVisible());
+      const exercises = pg.locator('#bai-tap article');
+      const firstExercise = exercises.first();
+      await firstExercise.getByText('Xem đáp án và giải thích').first().click();
+      ok(`ANH-06-GRAM-001 (${label}): đủ ba bộ bài tập và mở được lời giải`,
+        (await exercises.count())===3 && await firstExercise.getByText('Đáp án: C.', { exact: true }).first().isVisible());
+    }
 
     // --- 5. Breadcrumb + TOC + liên kết tiên quyết ---
     await page.goto(`${BASE}/bai/toan-12-cuctri-001/`, { waitUntil: 'networkidle' });

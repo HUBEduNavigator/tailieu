@@ -18,6 +18,7 @@ van,11,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Gi
 van,12,tot-nghiep-thpt,Nghị luận xã hội – tư tưởng đạo lí,1,1,0,seed-verified,VAN-12-NLXH-001: seed-verified (tự kiểm); chưa thẩm định độc lập A⇄B nên verified_count = 0
 van,12,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 anh,6,nen-tang,Ngữ âm – Nguyên âm đơn,1,1,0,seed-verified,ANH-06-PRON-001: seed-verified (tự kiểm); chưa thẩm định độc lập A⇄B nên verified_count = 0
+anh,6,nen-tang,"Hiện tại đơn, tần suất và phát âm đuôi -s/-es",1,1,1,verified,ANH-06-GRAM-001: đã nghiệm thu độc lập
 anh,6,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 anh,7,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này
 anh,8,(tất cả),(chưa lập kế hoạch chủ đề),0,0,0,cho-ke-hoach,Giai đoạn 2 sẽ lập danh sách chủ đề/dạng bài trọng tâm cho ô này

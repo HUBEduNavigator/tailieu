@@ -1,7 +1,7 @@
 {
   "$schema_note": "Sổ cái đăng ký học liệu. Mỗi đơn vị trong content/index.ts phải có đúng một mục ở đây; chạy `npm run validate` để đối chiếu.",
   "version": "0.1.0",
-  "updatedAt": "2026-11-20",
+  "updatedAt": "2026-11-21",
   "items": [
     {
       "id": "TOAN-06-SN-001",
@@ -62,6 +62,18 @@
       "accessLevel": "free",
       "filePath": "content/anh/06/pron-i-ngan-dai.ts",
       "updatedAt": "2026-11-19"
+    },
+    {
+      "id": "ANH-06-GRAM-001",
+      "title": "Thì hiện tại đơn, trạng từ chỉ tần suất và cách phát âm đuôi -s/-es",
+      "subject": "anh",
+      "grade": 6,
+      "track": "nen-tang",
+      "difficulty": "thong-hieu",
+      "status": "verified",
+      "accessLevel": "free",
+      "filePath": "content/anh/06/hien-tai-don-trang-tu-tan-suat-duoi-s-es.ts",
+      "updatedAt": "2026-11-20"
     },
     {
       "id": "ANH-12-NOTICE-001",

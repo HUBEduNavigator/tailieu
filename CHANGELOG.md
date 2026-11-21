@@ -2,6 +2,11 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạng YYYY-MM-DD.
 
+## [Chưa phát hành] – Đợt 3
+
+- Bổ sung học liệu Tiếng Anh 6 `ANH-06-GRAM-001` về thì hiện tại đơn, trạng từ chỉ tần suất và cách phát âm đuôi -s/-es. Học liệu có bảng IPA, ngữ pháp, từ vựng, ví dụ Anh–Việt và bài tập có đáp án.
+- Bổ sung kiểm thử trình duyệt cho trang học liệu, tìm kiếm tiếng Việt và bộ lọc Tiếng Anh 6.
+
 ## [0.2.0] – 2026-11-20
 
 - Thiết kế riêng cho kho học liệu. Trang khám phá đưa tìm kiếm, danh sách tài liệu và lối tắt theo môn, lớp, kỳ thi vào cùng một bố cục.
