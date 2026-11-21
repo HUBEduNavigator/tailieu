@@ -2,7 +2,7 @@
   "name": "hub-edunavigator-tailieu",
   "version": "0.2.0",
   "private": true,
-  "description": "Website Học liệu Tự học & Ngân hàng Dạng bài – HUB EduNavigator",
+  "description": "Cẩm nang làm bài thi – HUB EduNavigator",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,7 +15,6 @@
     "@fontsource/be-vietnam-pro": "5.3.0",
     "@fontsource/fraunces": "5.3.0",
     "@fontsource/noto-sans": "5.3.0",
-    "katex": "0.19.1",
     "lucide-react": "1.76.0",
     "next": "16.4.6",
     "react": "19.3.1",
@@ -23,7 +22,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.5",
-    "@types/katex": "0.16.8",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

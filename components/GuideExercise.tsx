@@ -11,9 +11,10 @@ interface Props {
   cue: string;
   reasoning: string;
   limit: string;
+  excerpt?: { lines: string[]; attribution: string };
 }
 
-export function GuideExercise({ question, choices, answer, cue, reasoning, limit }: Props) {
+export function GuideExercise({ question, choices, answer, cue, reasoning, limit, excerpt }: Props) {
   const [attempt, setAttempt] = useState<number>();
   const correct = attempt === answer;
 
@@ -21,6 +22,12 @@ export function GuideExercise({ question, choices, answer, cue, reasoning, limit
     <section className="practice-sheet" aria-labelledby="practice-title">
       <h2 id="practice-title">Thử trước khi xem lời giải</h2>
       <p className="practice-question" id="practice-question">{question}</p>
+      {excerpt && (
+        <figure className="practice-excerpt">
+          <blockquote>{excerpt.lines.map(line => <p key={line}>{line}</p>)}</blockquote>
+          <figcaption>{excerpt.attribution}</figcaption>
+        </figure>
+      )}
       <div role="group" aria-labelledby="practice-question" className="practice-choices">
         {choices.map((choice, index) => (
           <button

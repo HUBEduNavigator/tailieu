@@ -1,11 +1,8 @@
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, CornerDownRight } from "lucide-react";
-import { HomeSearch } from "@/components/HomeSearch";
+import { ArrowDown, ArrowRight, ArrowUpRight, CornerDownRight } from "lucide-react";
 import { SubjectIcon } from "@/components/SubjectIcon";
-import { getCatalog } from "@/lib/content";
-import { guideHref, guides, subjectIntros } from "@/lib/guides";
-import { SUBJECT_INFO } from "@/lib/labels";
-import { SUBJECTS } from "@/lib/schema";
+import { guideHref, guides } from "@/lib/guides";
+import { SUBJECT_INFO, SUBJECTS } from "@/lib/subjects";
 
 export default function HomePage() {
   const featured = guides.toan[0];
@@ -41,7 +38,7 @@ export default function HomePage() {
                 <h3>{SUBJECT_INFO[subject].name}</h3>
                 <ArrowUpRight size={17} aria-hidden />
               </Link>
-              <p>{subjectIntros[subject]}</p>
+              <p>{SUBJECT_INFO[subject].intro}</p>
             </div>
             <ul className="topic-list">
               {guides[subject].map(guide => (
@@ -56,14 +53,6 @@ export default function HomePage() {
             </ul>
           </section>
         ))}
-      </section>
-
-      <section className="container-x" aria-labelledby="archive-title">
-        <div className="archive-search">
-          <BookOpen size={23} aria-hidden />
-          <h2 id="archive-title">Tra cứu học liệu đã xuất bản</h2>
-          <HomeSearch items={getCatalog()} />
-        </div>
       </section>
     </div>
   );

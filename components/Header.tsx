@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SUBJECT_INFO } from "@/lib/labels";
-import { SUBJECTS } from "@/lib/schema";
+import { SUBJECT_INFO, SUBJECTS } from "@/lib/subjects";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -26,9 +25,6 @@ export function Header() {
               </Link>
             );
           })}
-        </nav>
-        <nav aria-label="Menu chính" className="header-nav">
-          <Link href="/hoc-lieu/" prefetch={false} aria-current={path === "/hoc-lieu/" ? "page" : undefined}>Danh mục</Link>
         </nav>
         <div className="header-theme"><ThemeToggle /></div>
       </div>

@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, Layers } from "lucide-react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { GuideExercise } from "@/components/GuideExercise";
 import { SubjectIcon } from "@/components/SubjectIcon";
 import { guideHref, guides } from "@/lib/guides";
-import { SUBJECT_INFO } from "@/lib/labels";
-import { SUBJECTS, type Subject } from "@/lib/schema";
+import { SUBJECT_INFO, SUBJECTS, type Subject } from "@/lib/subjects";
 
 export const dynamicParams = false;
 export const generateStaticParams = () => SUBJECTS.flatMap(subject =>
@@ -44,20 +43,15 @@ export default async function GuidePage(props: Props) {
       </header>
       <div className="subject-workspace">
         <GuideExercise key={guide.slug} {...guide} />
-        <aside className="practice-aside">
-          <BookOpen size={22} aria-hidden />
-          <h2>Đọc tiếp</h2>
-          <Link prefetch={false} data-guide-reading href={guide.reading.href}>
-            {guide.reading.label} <ArrowRight size={17} aria-hidden />
-          </Link>
-          <nav aria-label={`Chuyên mục ${subjectName}`}>
-            {guides[subject].filter(entry => entry.slug !== guide.slug).map(entry => (
-              <Link prefetch={false} key={entry.slug} href={guideHref(subject, entry.slug)}>
-                {entry.title} <ArrowRight size={17} aria-hidden />
-              </Link>
-            ))}
-          </nav>
-        </aside>
+        <nav className="practice-aside" aria-labelledby="more-practice-title">
+          <Layers size={22} aria-hidden />
+          <h2 id="more-practice-title">Luyện tiếp</h2>
+          {guides[subject].filter(entry => entry.slug !== guide.slug).map(entry => (
+            <Link prefetch={false} key={entry.slug} href={guideHref(subject, entry.slug)}>
+              {entry.title} <ArrowRight size={17} aria-hidden />
+            </Link>
+          ))}
+        </nav>
       </div>
     </article>
   );

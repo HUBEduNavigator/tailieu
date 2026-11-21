@@ -1,5 +1,5 @@
 import { BookOpen, FunctionSquare, Languages } from "lucide-react";
-import type { Subject } from "@/lib/schema";
+import type { Subject } from "@/lib/subjects";
 
 const icons = { toan: FunctionSquare, van: BookOpen, anh: Languages };
 

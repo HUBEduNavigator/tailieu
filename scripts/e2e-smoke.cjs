@@ -1,311 +1,109 @@
 /**
- * Kiểm thử khói bằng trình duyệt (Playwright) cho bản dựng tĩnh.
- * Cách chạy (cần Playwright sẵn có, KHÔNG phải dependency của dự án):
- *   NEXT_PUBLIC_BASE_PATH=/tailieu npm run build
- *   mkdir -p /tmp/site && ln -sfn "$PWD/out" /tmp/site/tailieu
- *   (cd /tmp/site && python3 -m http.server 4173 --protocol HTTP/1.1 &)
+ * Cần Playwright và Chromium. Chạy npm run build rồi:
+ *   root=$(mktemp -d)
+ *   ln -s "$PWD/out" "$root/tailieu"
+ *   python3 -m http.server 4173 --directory "$root" --protocol HTTP/1.1
  *   NODE_PATH=$(npm root -g) node scripts/e2e-smoke.cjs
- * Cập nhật số kết quả kỳ vọng khi thêm học liệu.
  */
-const { chromium } = require('playwright');
-const BASE = 'http://localhost:4173/tailieu';
-const SHOTS = require('os').tmpdir();
-const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
-const results = [];
-const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra}); console.log((cond?'PASS ':'FAIL ')+name+(extra?'  -> '+extra:'')); };
+const assert = require("node:assert/strict");
+const { existsSync } = require("node:fs");
+const { join } = require("node:path");
+const { chromium } = require("playwright");
 
-(async () => {
-  const browser = await chromium.launch({ executablePath });
+const base = "http://localhost:4173/tailieu/";
+const retiredRoutes = ["hoc-lieu", "bai"];
+
+async function run() {
+  for (const route of retiredRoutes) {
+    assert.ok(!existsSync(join(__dirname, "..", "out", route)), `Đường dẫn vẫn được xuất tĩnh: ${route}`);
+  }
+
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE });
   try {
-    // --- 1. Crawl all links ---
-    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    const page = await ctx.newPage();
-    const consoleErrors = []; const failed = [];
-    page.on('console', m => { if (m.type()==='error') consoleErrors.push(m.text()); });
-    page.on('pageerror', e => consoleErrors.push('pageerror: '+e.message));
-    page.on('response', r => { if (r.status()>=400) failed.push(r.status()+' '+r.url()); });
-    page.on('requestfailed', r => failed.push(r.failure().errorText+' '+r.url()));
+    const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: "light" });
+    const mobile = await browser.newPage({ viewport: { width: 320, height: 800 } });
+    const errors = [];
+    for (const page of [desktop, mobile]) {
+      page.on("pageerror", error => errors.push(error.message));
+      page.on("console", message => {
+        if (message.type() === "error") errors.push(message.text());
+      });
+    }
 
-    const seen = new Set(); const queue = [BASE + '/']; const bad = [];
-    while (queue.length) {
-      const url = queue.shift(); const key = url.split('#')[0].split('?')[0];
-      if (seen.has(key)) continue; seen.add(key);
-      const resp = await page.goto(url, { waitUntil: 'networkidle' });
-      if (!resp || resp.status() !== 200) { bad.push(url+' '+(resp&&resp.status())); continue; }
-      const links = await page.$$eval('a[href]', as => as.map(a => a.href));
-      for (const l of links) {
-        if (l.startsWith('http://localhost:4173')) {
-          if (!l.startsWith(BASE+'/') && l !== BASE) bad.push('NGOÀI /tailieu: '+l+' (từ '+url+')');
-          else queue.push(l);
-        }
+    const pending = new Set([base]);
+    const visited = new Set();
+    for (const url of pending) {
+      const response = await desktop.goto(url);
+      assert.equal(response?.status(), 200, url);
+      visited.add(url);
+      const links = await desktop.locator("a[href]").evaluateAll(anchors => anchors.map(anchor => anchor.href));
+      for (const href of links) {
+        const destination = new URL(href);
+        if (destination.origin !== new URL(base).origin) continue;
+        assert.ok(href.startsWith(base), `Liên kết ra ngoài cẩm nang: ${href}`);
+        destination.hash = "";
+        pending.add(destination.href);
       }
-    }
-    ok('Crawl: mọi liên kết nội bộ trả 200 và nằm dưới /tailieu', bad.length===0, `${seen.size} trang; lỗi: ${bad.join(' | ')}`);
-    ok('Không lỗi console / request thất bại', consoleErrors.length===0 && failed.length===0, [...consoleErrors, ...failed].join(' | '));
-    console.log('Pages:', [...seen].map(s=>s.replace(BASE,'')).join(', '));
-
-    // --- 2. Mobile overflow + raw LaTeX + fonts ---
-    const mctx = await browser.newContext({ viewport: { width: 375, height: 800 }, deviceScaleFactor: 1 });
-    const m = await mctx.newPage();
-    const pages = [...seen];
-    for (const u of pages) {
-      await m.goto(u, { waitUntil: 'networkidle' });
-      const o = await m.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth, bsw: document.body.scrollWidth }));
-      ok(`375px không tràn ngang: ${u.replace(BASE,'')||'/'}`, o.sw <= o.iw+1 && o.bsw <= o.iw+1, `scrollWidth=${o.sw}/${o.iw}`);
-    }
-    const collections = pages.filter(url => new URL(url).pathname.split('/').filter(Boolean).length === 4 && url.includes('/mon/'));
-    ok('Cẩm nang có sáu chuyên mục', collections.length === 6);
-    for (const url of collections) {
-      await m.goto(url);
-      const answer = m.locator('details').last();
-      const limit = answer.getByRole('heading', { name: 'Giới hạn áp dụng' });
-      const hiddenInitially = !(await limit.isVisible());
-      await answer.locator('summary').focus();
-      await m.keyboard.press('Enter');
-      ok('Mở lời giải bằng bàn phím: '+url.replace(BASE,''), hiddenInitially && await limit.isVisible());
-      const reading = m.locator('[data-guide-reading]');
-      const destination = new URL(await reading.getAttribute('href'), url);
-      await reading.click();
-      await m.waitForURL(destination.href);
-      await m.locator('main h1').waitFor();
-      const anchor = new URL(m.url()).hash;
-      ok('Đọc tiếp đúng tài liệu và mục: '+url.replace(BASE,''), m.url().includes('/bai/') && (!anchor || await m.locator(anchor).count() === 1));
-    }
-    await page.goto(BASE + '/');
-    await page.getByRole('link', { name: 'Thử chọn nghiệm' }).click();
-    await page.getByRole('button', { name: 'Giữ cả 2 và −1' }).click();
-    const feedback = page.locator('.practice-feedback');
-    ok('Thử nghiệm ngoại lai: phản hồi giải thích phương án sai', (await feedback.innerText()).includes('Thử lại.'));
-    const correctChoice = page.getByRole('button', { name: 'Chỉ giữ 2' });
-    await correctChoice.focus();
-    await page.keyboard.press('Space');
-    ok('Thử nghiệm ngoại lai: đổi đáp án bằng bàn phím nhận phản hồi đúng',
-      (await correctChoice.getAttribute('aria-pressed')) === 'true' && (await feedback.innerText()).includes('Đúng.'));
-    await page.getByRole('link', { name: 'Nhận dạng và loại phương án' }).click();
-    await page.waitForURL('**/loai-phuong-an/');
-    ok('Chuyển chuyên mục bắt đầu lượt thử mới', await page.locator('.practice-choices [aria-pressed="true"]').count() === 0);
-    for (const slug of ['toan-06-sn-001','toan-06-ch-001','toan-09-ptb2-001','toan-12-cuctri-001','van-06-dhtr-001','van-12-nlxh-001','anh-06-pron-001','anh-06-gram-001','anh-12-notice-001']) {
-      for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
-        await pg.goto(`${BASE}/bai/${slug}/`, { waitUntil: 'networkidle' });
-        const info = await pg.evaluate(() => {
-          const clone = document.querySelector('main').cloneNode(true);
-          clone.querySelectorAll('.katex-mathml, annotation, script, style').forEach(n => n.remove());
-          const t = clone.innerText || clone.textContent;
-          return { dollars: (t.match(/\$/g)||[]).length, backslash: (t.match(/\\[a-zA-Z]+/g)||[]).slice(0,5), katex: document.querySelectorAll('.katex').length, katexErr: document.querySelectorAll('.katex-error').length };
-        });
-        ok(`${slug} (${label}): không lộ LaTeX/$ thô`, info.dollars===0 && info.backslash.length===0 && info.katexErr===0, `katex=${info.katex} $=${info.dollars} bs=${info.backslash}`);
-      }
-    }
-    for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
-      const response = await pg.goto(`${BASE}/bai/toan-06-ch-001/`, { waitUntil: 'networkidle' });
-      const examples = pg.locator('#vi-du article');
-      ok(`TOAN-06-CH-001 (${label}): tải trang tĩnh, đủ 5 ví dụ và có nhãn thẩm định`,
-        response?.status()===200 && (await examples.count())===5
-        && (await pg.locator('#nguon').innerText()).includes('Đã thẩm định'));
-      const factorization = examples.nth(0);
-      const fraction = examples.nth(2);
-      const formulaSources = (await examples.locator('.katex-mathml annotation').allTextContents()).join(' ');
-      ok(`TOAN-06-CH-001 (${label}): sơ đồ cột, phân số và ký hiệu chia hết dựng bằng KaTeX`,
-        await factorization.locator('.katex-html .mtable').first().isVisible()
-        && await fraction.locator('.katex-html .mfrac').first().isVisible()
-        && ['\\cdot', '\\mathbb{N}', '\\text{ƯCLN}', '\\vdots'].every(command => formulaSources.includes(command)));
-    }
-    const primeListScrolls = await m.locator('#trong-tam .prose-list').evaluate(list => {
-      list.scrollLeft = list.scrollWidth - list.clientWidth;
-      return getComputedStyle(list).overflowX === 'auto' && list.scrollLeft > 0;
-    });
-    ok('TOAN-06-CH-001 (mobile): cuộn ngang được để đọc hết dãy số nguyên tố', primeListScrolls);
-    // KaTeX fonts thực sự nạp
-    await page.goto(`${BASE}/bai/toan-12-cuctri-001/`, { waitUntil: 'networkidle' });
-    const kf = await page.evaluate(async () => { await document.fonts.ready; return [...document.fonts].filter(f=>f.status==='loaded').map(f=>f.family+' '+f.weight); });
-    ok('KaTeX font đã nạp (bundle cục bộ)', kf.some(x=>x.includes('KaTeX')), kf.slice(0,4).join(', '));
-    // Bảng biến thiên cuộn ngang trên mobile
-    await m.goto(`${BASE}/bai/toan-12-cuctri-001/`, { waitUntil: 'networkidle' });
-    const blk = await m.evaluate(() => { const b=[...document.querySelectorAll('.math-block')].map(e=>({sw:e.scrollWidth,cw:e.clientWidth,ox:getComputedStyle(e).overflowX})); return b.filter(x=>x.sw>x.cw); });
-    ok('Công thức khối dài có cuộn ngang trên 375px (hoặc vừa khung)', blk.every(b=>b.ox==='auto'), JSON.stringify(blk));
-
-    // IPA font
-    await page.goto(`${BASE}/bai/anh-06-pron-001/`, { waitUntil: 'networkidle' });
-    const ipa = await page.evaluate(async () => { await document.fonts.ready; const el=document.querySelector('.ipa'); const ff=getComputedStyle(el).fontFamily; const loaded=[...document.fonts].filter(f=>f.status==='loaded'&&f.family.includes('Noto Sans')).map(f=>f.family+' '+f.weight+' '+f.unicodeRange.slice(0,40)); const chars=['ɪ','ʃ','ː','ˈ','ə','θ','ð','ŋ','ɚ','ɡ','ɒ']; const chk=chars.map(c=>document.fonts.check('16px "Noto Sans"', c)); return { ff, loaded: loaded.length, chk: chars.map((c,i)=>c+':'+chk[i]).join(' ') }; });
-    ok('Font IPA (Noto Sans) nạp và có đủ ký tự', ipa.loaded>0, JSON.stringify(ipa));
-    await page.screenshot({ path: SHOTS+'/anh-ipa-desktop.png', fullPage: false });
-    await page.locator('#ipa').scrollIntoViewIfNeeded();
-    await page.locator('#ipa').screenshot({ path: SHOTS+'/anh-ipa-section.png' });
-    await m.goto(`${BASE}/bai/anh-06-pron-001/`, { waitUntil: 'networkidle' });
-    await m.locator('#ipa').scrollIntoViewIfNeeded(); await m.locator('#ipa').screenshot({ path: SHOTS+'/anh-ipa-mobile.png' });
-    await m.goto(`${BASE}/bai/van-12-nlxh-001/`, { waitUntil: 'networkidle' });
-    await m.locator('#dan-chung').scrollIntoViewIfNeeded(); await m.locator('#dan-chung').screenshot({ path: SHOTS+'/van-dan-chung-mobile.png' });
-    await page.goto(`${BASE}/bai/toan-12-cuctri-001/`, { waitUntil: 'networkidle' });
-    await page.locator('#vi-du').screenshot({ path: SHOTS+'/toan12-vidu-desktop.png' });
-    await m.goto(`${BASE}/bai/toan-12-cuctri-001/`, { waitUntil: 'networkidle' });
-    await m.screenshot({ path: SHOTS+'/toan12-mobile-top.png' });
-    await m.locator('#vi-du').screenshot({ path: SHOTS+'/toan12-vidu-mobile.png' });
-
-    // --- 3. Tìm kiếm có dấu / không dấu ---
-    await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-    const searchTests = [['cực trị','TOAN-12-CUCTRI-001'],['cuc tri','TOAN-12-CUCTRI-001'],['VIETE','TOAN-09-PTB2-001'],['Viète','TOAN-09-PTB2-001'],['ANH-12','ANH-12-NOTICE-001'],['thong bao','ANH-12-NOTICE-001'],['tài tâm','VAN-12-NLXH-001'],['tai tam','VAN-12-NLXH-001'],['nghị luận','VAN-12-NLXH-001'],['đạo hàm','TOAN-12-CUCTRI-001'],['dao ham','TOAN-12-CUCTRI-001'],['thì hiện tại đơn','ANH-06-GRAM-001'],['thi hien tai don','ANH-06-GRAM-001'],['thừa số nguyên tố','TOAN-06-CH-001'],['thua so nguyen to','TOAN-06-CH-001']];
-    searchTests.push(['đọc hiểu văn bản truyện','VAN-06-DHTR-001'], ['doc hieu van ban truyen','VAN-06-DHTR-001']);
-    for (const [q, expect] of searchTests) {
-      await page.fill('#home-q', q); await page.waitForTimeout(80);
-      const txt = await page.locator('[aria-live=polite] ul li').first().innerText();
-      const first = await page.locator('[aria-live=polite] ul li a').first().getAttribute('href');
-      ok(`Tìm trang chủ "${q}" → kết quả đầu là ${expect}`, first.endsWith('/'+expect.toLowerCase()+'/'), txt.slice(0,80).replace(/\n/g,' | '));
-    }
-    for (const q of ['phát âm', 'phat am']) {
-      await page.fill('#home-q', q);
-      const links = page.locator('[aria-live=polite] ul li a');
-      ok(`Tìm trang chủ "${q}" → có cả hai bài phát âm Tiếng Anh 6`,
-        (await links.and(page.locator('a[href$="/bai/anh-06-pron-001/"]')).count())===1
-        && (await links.and(page.locator('a[href$="/bai/anh-06-gram-001/"]')).count())===1);
-    }
-    await page.fill('#home-q', 'zzzxxx'); await page.waitForTimeout(80);
-    ok('Tìm không có kết quả hiện thông báo minh bạch', (await page.locator('[aria-live=polite]').first().innerText()).includes('cập nhật theo lộ trình'));
-
-    await page.fill('#home-q', 'cuc tri');
-    await page.keyboard.press('Escape');
-    ok('Escape đóng gợi ý tìm kiếm', (await page.locator('.search-results').count())===0);
-    await page.press('#home-q', 'Enter');
-    await page.waitForURL(url => url.pathname.endsWith('/hoc-lieu/') && url.searchParams.get('q')==='cuc tri');
-    await page.waitForSelector('#q');
-    ok('Enter mở danh mục với từ khóa tìm kiếm', (await page.inputValue('#q'))==='cuc tri');
-    await page.getByRole('navigation', { name: 'Menu chính' }).getByRole('link', { name: 'Danh mục' }).click();
-    await page.waitForURL(url => url.pathname.endsWith('/hoc-lieu/') && !url.search);
-    ok('Menu Danh mục xóa truy vấn cũ', (await page.inputValue('#q'))==='');
-
-    // --- 4. Bộ lọc đa chiều ---
-    await page.goto(`${BASE}/hoc-lieu/`, { waitUntil: 'networkidle' });
-    const count = async () => (await page.locator('section[aria-label="Kết quả"] a.card').count());
-    ok('Catalog: 9 kết quả ban đầu', (await count())===9, String(await count()));
-    await page.getByRole('button', { name: 'Toán học', exact: true }).click(); ok('Lọc Toán → 4', (await count())===4);
-    await page.getByRole('button', { name: '12', exact: true }).click(); ok('Toán + Lớp 12 → 1', (await count())===1);
-    await page.getByRole('button', { name: 'Tuyển sinh lớp 10' }).click(); ok('Toán + 12 + TS10 → 0 và báo "Đang cập nhật theo lộ trình"', (await count())===0 && (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
-    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click(); ok('Xóa bộ lọc → 9', (await count())===9);
-    await page.getByRole('button', { name: 'Tốt nghiệp THPT' }).click(); ok('Nhóm TN THPT → 3 (Toán12, Văn12, Anh12)', (await count())===3, String(await count()));
-    await page.getByRole('button', { name: 'Vận dụng', exact: true }).click(); ok('TN THPT + Vận dụng → 3', (await count())===3);
-    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click();
-    await page.selectOption('#chude', { index: 1 }); ok('Chủ đề chọn được', (await count())>=1);
-    await page.getByRole('button', { name: 'Xóa bộ lọc' }).first().click();
-    await page.locator('#q').pressSequentially('cuc tri');
-    ok('Catalog tìm "cuc tri" → 1', (await page.inputValue('#q'))==='cuc tri' && (await count())===1);
-    await page.goto(`${BASE}/hoc-lieu/?mon=anh&lop=6`, { waitUntil: 'networkidle' });
-    ok('URL ?mon=anh&lop=6 → 2', (await count())===2);
-    await page.getByRole('button', { name: 'Nền tảng', exact: true }).click();
-    await page.fill('#q', 'thi hien tai don');
-    const grammarUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/anh-06-gram-001/"]');
-    ok('Lọc Tiếng Anh 6 Nền tảng và tìm không dấu ra ANH-06-GRAM-001',
-      (await count())===1 && (await grammarUnit.count())===1 && new URL(page.url()).searchParams.get('nhom')==='nen-tang');
-    await page.goto(`${BASE}/hoc-lieu/?lop=7`, { waitUntil: 'networkidle' });
-    ok('Lớp 7 trống: thông báo "Đang cập nhật theo lộ trình"', (await page.locator('section[aria-label="Kết quả"]').innerText()).includes('Đang cập nhật theo lộ trình'));
-    await page.goto(`${BASE}/hoc-lieu/?mon=toan&lop=9&chude=phuong-trinh-bac-hai-mot-an`, { waitUntil: 'networkidle' }); ok('Breadcrumb chủ đề (chude slug) → 1', (await count())===1);
-
-    await page.goto(`${BASE}/hoc-lieu/?mon=toan&lop=6&nhom=nen-tang&q=so+nguyen`, { waitUntil: 'networkidle' });
-    const integerUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/toan-06-sn-001/"]');
-    const divisibilityUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/toan-06-ch-001/"]');
-    ok('Lọc Toán 6 Nền tảng và tìm "so nguyen" trả về hai bài phù hợp',
-      (await count())===2 && (await integerUnit.count())===1 && (await divisibilityUnit.count())===1);
-    await integerUnit.click();
-    await page.waitForURL('**/bai/toan-06-sn-001/');
-    ok('Bài số nguyên có đủ 7 ví dụ và nhãn thẩm định', (await page.locator('#vi-du article').count())===7 && (await page.locator('#nguon').innerText()).includes('Đã thẩm định'));
-
-    await m.goto(`${BASE}/hoc-lieu/`, { waitUntil: 'networkidle' });
-    const toggle = m.getByRole('button', { name: 'Bộ lọc', exact: true });
-    ok('Bộ lọc thu gọn lúc mở danh mục trên điện thoại', (await toggle.getAttribute('aria-expanded'))==='false');
-    await toggle.click();
-    await m.getByRole('button', { name: 'Tiếng Anh', exact: true }).click();
-    ok('Mở bộ lọc di động và lọc Tiếng Anh → 3', (await m.locator('section[aria-label="Kết quả"] a.card').count())===3);
-
-    for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
-      const response = await pg.goto(`${BASE}/bai/anh-06-gram-001/`, { waitUntil: 'networkidle' });
-      ok(`ANH-06-GRAM-001 (${label}): trang xuất tĩnh trả 200 và có nhãn thẩm định`,
-        response?.status()===200 && (await pg.locator('#nguon').innerText()).includes('Đã thẩm định'));
-      const ipa = pg.locator('#ipa');
-      const ipaSounds = await ipa.locator('article [lang="en-fonipa"]').allTextContents();
-      const goes = ipa.getByRole('row').filter({ has: pg.getByRole('rowheader', { name: 'goes', exact: true }) });
-      ok(`ANH-06-GRAM-001 (${label}): đủ ba âm, năm bảng IPA và giữ khác biệt Anh–Anh/Anh–Mỹ`,
-        ipaSounds.join(' ') === '/s/ /z/ /ɪz/' && (await ipa.getByRole('table').count())===5
-        && (await goes.locator('[lang="en-fonipa"]').allTextContents()).join(' ') === '/ɡəʊz/ /ɡoʊz/');
-      ok(`ANH-06-GRAM-001 (${label}): đủ bốn bảng ngữ pháp và hai bảng từ vựng`,
-        (await pg.locator('#ngu-phap table').count())===4 && (await pg.locator('#tu-vung table').count())===2);
-      const bilingual = pg.locator('#anh-viet li');
-      ok(`ANH-06-GRAM-001 (${label}): đủ bảy ví dụ song ngữ và có bản dịch`,
-        (await bilingual.count())===7
-        && await bilingual.filter({ hasText: 'Nam is usually ready for school by seven.' })
-          .getByText('Đến bảy giờ, Nam thường đã sẵn sàng đi học.', { exact: true }).isVisible());
-      const exercises = pg.locator('#bai-tap article');
-      const firstExercise = exercises.first();
-      await firstExercise.getByText('Xem đáp án và giải thích').first().click();
-      ok(`ANH-06-GRAM-001 (${label}): đủ ba bộ bài tập và mở được lời giải`,
-        (await exercises.count())===3 && await firstExercise.getByText('Đáp án: C.', { exact: true }).first().isVisible());
+      await mobile.goto(url);
+      assert.ok(await mobile.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `Tràn ngang ở 320px: ${url}`);
     }
 
-    await page.goto(`${BASE}/hoc-lieu/?mon=van&lop=6&nhom=nen-tang`, { waitUntil: 'networkidle' });
-    const readingUnit = page.locator('section[aria-label="Kết quả"] a[href$="/bai/van-06-dhtr-001/"]');
-    ok('Lọc Ngữ văn 6 Nền tảng trả về VAN-06-DHTR-001', (await count())===1 && (await readingUnit.count())===1);
-    for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
-      const response = await pg.goto(`${BASE}/bai/van-06-dhtr-001/`, { waitUntil: 'networkidle' });
-      const examples = pg.locator('#vi-du article');
-      ok(`VAN-06-DHTR-001 (${label}): trang tĩnh có bốn ví dụ và nhãn thẩm định`,
-        response?.status()===200 && (await examples.count())===4
-        && (await pg.locator('#nguon').innerText()).includes('Đã thẩm định'));
-      const quotes = examples.locator('figure.quote-box');
-      const firstQuote = quotes.first().locator('blockquote');
-      ok(`VAN-06-DHTR-001 (${label}): ba đoạn nguyên văn tách khối, giữ nguồn và xuống dòng`,
-        (await quotes.count())===3 && await firstQuote.isVisible()
-        && (await firstQuote.textContent()).includes('\n\n– Mình sẽ làm một tấm biển.')
-        && (await quotes.first().innerText()).includes('Tấm biển ở đầu ngõ — truyện ngắn biên soạn gốc'));
-      ok(`VAN-06-DHTR-001 (${label}): khung đọc hiểu có đủ năm phần`,
-        (await pg.locator('#khung-bai-viet ol > li').count())===5);
-      const cards = await pg.locator('#dan-chung article').all();
-      const cardIds = await Promise.all(cards.map(card => card.locator('.eyebrow span').textContent()));
-      const complete = await Promise.all(cards.map(async card => {
-        const fields = await card.locator('dt').allTextContents();
-        return fields.join('|')==='1. Xuất xứ|2. Nội dung cốt lõi|3. Ý nghĩa|4. Chủ đề vận dụng'
-          && await card.locator('.callout-warn').getByText('5. Giới hạn sử dụng', { exact: true }).isVisible();
-      }));
-      ok(`VAN-06-DHTR-001 (${label}): hai thẻ đủ năm mục và có khối Giới hạn sử dụng`,
-        cardIds.join(' ')==='DC-VAN-06-001 DC-VAN-06-002' && complete.every(Boolean));
+    const guides = [...visited].filter(url => url.slice(base.length).split("/").filter(Boolean).length === 3);
+    assert.ok(guides.length >= 6, "Thiếu chuyên mục thực hành");
+    for (const url of guides) {
+      await mobile.goto(url);
+      const hint = mobile.getByText("Xem gợi ý", { exact: true });
+      await hint.focus();
+      await mobile.keyboard.press("Enter");
+      assert.equal(await mobile.locator("details[open]").count(), 1, url);
+      const limit = mobile.getByRole("heading", { name: "Giới hạn áp dụng", includeHidden: true });
+      assert.ok(!(await limit.isVisible()), url);
+      await mobile.getByText("Đối chiếu cách làm", { exact: true }).click();
+      assert.ok(await limit.isVisible(), url);
+      const more = mobile.getByRole("navigation", { name: "Luyện tiếp" }).locator("a").first();
+      const target = new URL(await more.getAttribute("href"), url).href;
+      assert.ok(guides.includes(target) && target !== url);
+      await more.click();
+      await mobile.waitForURL(target);
     }
 
-    // --- 5. Breadcrumb + TOC + liên kết tiên quyết ---
-    await page.goto(`${BASE}/bai/toan-12-cuctri-001/`, { waitUntil: 'networkidle' });
-    ok('Breadcrumb có 5 mục', (await page.locator('nav[aria-label="Đường dẫn"] li').count())===5);
-    ok('TOC có liên kết neo', (await page.locator('aside a[href^="#"]').count())>=10);
-    await page.getByRole('link', { name: 'Ví dụ có lời giải' }).click();
-    await page.waitForURL('**/#vi-du');
-    ok('Đọc nhanh nhảy đến phần ví dụ', (await page.locator('#vi-du h2').innerText())==='Ví dụ minh họa');
-    await page.locator('main a[href$="/bai/toan-09-ptb2-001/"]').first().click(); await page.waitForURL('**/bai/toan-09-ptb2-001/');
-    ok('Liên kết tiên quyết dẫn đúng sang TOAN-09-PTB2-001', page.url().endsWith('/bai/toan-09-ptb2-001/'), page.url());
+    await desktop.goto(base);
+    await desktop.getByRole("link", { name: "Thử chọn nghiệm" }).click();
+    await desktop.getByRole("button", { name: "Giữ cả 2 và −1" }).click();
+    const feedback = desktop.getByRole("status");
+    assert.match(await feedback.innerText(), /Thử lại/);
+    const correct = desktop.getByRole("button", { name: "Chỉ giữ 2" });
+    await correct.focus();
+    await desktop.keyboard.press("Space");
+    assert.equal(await correct.getAttribute("aria-pressed"), "true");
+    assert.match(await feedback.innerText(), /Đúng/);
+    await desktop.getByRole("button", { name: "Chuyển sang giao diện tối" }).click();
+    await desktop.reload();
+    assert.equal(await desktop.locator("html").getAttribute("data-theme"), "dark");
 
-    // --- 6. Dark mode lưu trạng thái ---
-    await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-    const t0 = await page.evaluate(()=>document.documentElement.dataset.theme);
-    await page.getByRole('button', { name: /Chuyển sang giao diện/ }).click();
-    const t1 = await page.evaluate(()=>document.documentElement.dataset.theme);
-    await page.reload({ waitUntil: 'networkidle' });
-    const t2 = await page.evaluate(()=>document.documentElement.dataset.theme);
-    ok('Đổi sáng/tối và lưu qua tải lại', t0!==t1 && t1===t2, `${t0}→${t1}→${t2}`);
-    await page.screenshot({ path: SHOTS+'/home-dark-desktop.png' });
-    await page.goto(`${BASE}/bai/van-12-nlxh-001/`, { waitUntil: 'networkidle' });
-    await page.locator('#dan-chung').screenshot({ path: SHOTS+'/van-dan-chung-dark.png' });
-    // reset theme
-    await page.evaluate(()=>localStorage.removeItem('tailieu-theme'));
+    await desktop.goto(base + "mon/van/ngu-lieu-dan-chung/");
+    assert.match(await desktop.locator("blockquote").innerText(), /Chữ tâm kia mới bằng ba chữ tài/);
+    assert.match(await desktop.locator("figcaption").innerText(), /Nguyễn Du.*Truyện Kiều/);
 
-    // --- 7. 404 ---
-    await page.goto(`${BASE}/404.html`, { waitUntil: 'networkidle' });
-    ok('404.html hiển thị trang lỗi thân thiện có liên kết về trang chủ', (await page.content()).includes('Không tìm thấy trang') && (await page.locator('main a[href$="/tailieu/"]').count())===1);
+    await desktop.goto(base + "404.html");
+    assert.ok(await desktop.getByRole("heading", { name: "Không tìm thấy trang" }).isVisible());
+    await desktop.getByRole("link", { name: "Về trang chủ" }).click();
+    await desktop.waitForURL(base);
+    assert.deepEqual(errors, [], "Lỗi trong trình duyệt");
 
-    // Ảnh trang chủ
-    await ctx.clearCookies();
-    await m.goto(`${BASE}/`, { waitUntil: 'networkidle' }); await m.screenshot({ path: SHOTS+'/home-mobile.png', fullPage: true });
-    await page.evaluate(()=>localStorage.clear()); await page.goto(`${BASE}/`, { waitUntil: 'networkidle' }); await page.screenshot({ path: SHOTS+'/home-desktop.png' });
+    for (const route of retiredRoutes) {
+      const response = await desktop.request.get(base + route + "/");
+      assert.equal(response.status(), 404);
+    }
 
-    const fails = results.filter(r=>!r.pass);
-    console.log(`\nTỔNG: ${results.length-fails.length}/${results.length} đạt`); if (fails.length) console.log('THẤT BẠI:\n'+fails.map(f=>' - '+f.name+' '+f.extra).join('\n'));
-    if (fails.length) process.exitCode = 1;
+    console.log(`✓ ${visited.size} trang, ${guides.length} chuyên mục, điều hướng, lựa chọn, trích dẫn, giao diện tối và chiều rộng 320px đều đạt.`);
+    console.log("✓ Các đường dẫn đã gỡ trả HTTP 404.");
   } finally {
     await browser.close();
   }
-})().catch((error) => {
+}
+
+run().catch(error => {
   console.error(error);
   process.exitCode = 1;
 });

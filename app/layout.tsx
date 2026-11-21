@@ -14,7 +14,6 @@ import "@fontsource/noto-sans/greek-400.css";
 import "@fontsource/noto-sans/latin-600.css";
 import "@fontsource/noto-sans/latin-ext-600.css";
 import "@fontsource/noto-sans/greek-600.css";
-import "katex/dist/katex.min.css";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -25,7 +24,7 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hubedunavigator.github.io/tailieu/"),
-  title: { default: title, template: "%s | HUB EduNavigator – Học liệu" },
+  title: { default: title, template: "%s | HUB EduNavigator" },
   description,
   openGraph: { title, description, type: "website", locale: "vi_VN", siteName: "HUB EduNavigator" },
 };
