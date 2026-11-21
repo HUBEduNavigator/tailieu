@@ -1,13 +1,15 @@
 # HUB EduNavigator – Kho học liệu (`tailieu`)
 
-Website tĩnh về **học liệu tự học và ngân hàng dạng bài** cho học sinh Việt Nam lớp 6–12 (chương trình GDPT 2018), ba môn: **Toán học, Ngữ văn, Tiếng Anh**. Thuộc hệ sinh thái HUB EduNavigator (trang chủ: <https://hubedunavigator.github.io/home/>).
+Website **Cẩm nang làm bài thi** cho học sinh Việt Nam lớp 6–12 (chương trình GDPT 2018), ba môn: **Toán học, Ngữ văn, Tiếng Anh**. Thuộc hệ sinh thái HUB EduNavigator (trang chủ: <https://hubedunavigator.github.io/home/>).
 
 - Địa chỉ khi đã bật GitHub Pages: <https://hubedunavigator.github.io/tailieu/>
 - Phiên bản hiện tại: **v0.2.0** (giao diện kho học liệu, xem `CHANGELOG.md`)
 
 ## Học liệu được tổ chức thế nào
 
-`Môn → Lớp (6–12) → Nhóm học liệu → Chủ đề → Dạng bài`
+Trang chủ → Môn → Chuyên mục → Tình huống tự thử, gợi ý, cách làm và giới hạn. Nội dung chuyên mục nằm ở `lib/guides.ts`. Dùng [meta-prompt điều phối](prompts/META_PROMPT_FINAL.md) để mở đợt nghiên cứu tiếp theo.
+
+Kho bài trước đây vẫn có thể tra cứu trong Danh mục theo môn, lớp, nhóm và chủ đề.
 
 Năm nhóm học liệu: `Nền tảng`, `Nâng cao`, `Tuyển sinh lớp 10`, `Tốt nghiệp THPT`, `Bổ trợ`.
 

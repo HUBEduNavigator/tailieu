@@ -43,7 +43,7 @@ export function HomeSearch({ items }: { items: CatalogItem[] }) {
         <label htmlFor="home-q" className="sr-only">Tìm dạng bài</label>
         <Search size={21} aria-hidden />
         <input id="home-q" name="q" type="search" value={q} autoComplete="off"
-          placeholder="Tìm chủ đề hoặc mã bài…"
+          placeholder="Tìm trong học liệu đã xuất bản…"
           onChange={(e) => { setQ(e.target.value); setShowResults(true); }}
         />
         <button type="submit" className="btn btn-primary">Tìm kiếm</button>
@@ -57,7 +57,7 @@ export function HomeSearch({ items }: { items: CatalogItem[] }) {
                   <li key={item.id}>
                     <Link href={unitHref(item.id)} prefetch={false} className="search-hit">
                       <strong>{item.title}</strong>
-                      <span>{SUBJECT_INFO[item.subject].name} · Lớp {item.grade} · {item.id}</span>
+                      <span>{SUBJECT_INFO[item.subject].name} · Lớp {item.grade}</span>
                     </Link>
                   </li>
                 ))}

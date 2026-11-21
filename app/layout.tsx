@@ -19,9 +19,9 @@ import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 
-const title = "HUB EduNavigator | Kho học liệu tự học và ngân hàng dạng bài";
+const title = "HUB EduNavigator | Cẩm nang làm bài thi";
 const description =
-  "Học liệu tự học và ngân hàng dạng bài Toán, Ngữ văn, Tiếng Anh lớp 6–12 theo chương trình GDPT 2018: phương pháp, ví dụ giải chi tiết, lỗi sai thường gặp.";
+  "Cẩm nang Toán, Ngữ văn và Tiếng Anh giúp học sinh nhận diện dấu hiệu trong đề thi, chọn cách làm và kiểm tra giới hạn áp dụng.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hubedunavigator.github.io/tailieu/"),
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: { title, description, type: "website", locale: "vi_VN", siteName: "HUB EduNavigator" },
 };
 
-export const viewport: Viewport = { themeColor: "#332372", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#102f42", width: "device-width", initialScale: 1 };
 
 const themeScript = `try{var t=localStorage.getItem('tailieu-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='light'}`;
 

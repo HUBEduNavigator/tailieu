@@ -4,42 +4,42 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --bg: #f6f5fa;
+  --bg: #f5f6f4;
   --surface: #fff;
-  --surface-2: #efedf7;
-  --ink: #211b35;
-  --muted: #5e586d;
-  --line: #e3deed;
-  --navy: #382579;
-  --accent: #5a3ac2;
+  --surface-2: #e8efed;
+  --ink: #182e38;
+  --muted: #4f646b;
+  --line: #d4dfdc;
+  --navy: #14394c;
+  --accent: #11675f;
   --accent-ink: #fff;
-  --accent-text: #5032b3;
-  --focus: #6a45db;
+  --accent-text: #105e58;
+  --focus: #26897f;
   --ok: #217650;
   --warn-bg: #fff5df;
   --warn-line: #e3c781;
   --warn-ink: #594117;
-  --quote-bg: #f0edfb;
-  --quote-line: #a592df;
+  --quote-bg: #eaf4f2;
+  --quote-line: #70a89f;
 }
 [data-theme="dark"] {
-  --bg: #171422;
-  --surface: #221e31;
-  --surface-2: #2d2641;
-  --ink: #f3effc;
-  --muted: #c2bad1;
-  --line: #3c3450;
-  --navy: #5938a5;
-  --accent: #c5b2ff;
-  --accent-ink: #241447;
-  --accent-text: #c5b2ff;
-  --focus: #ccbcff;
+  --bg: #101c24;
+  --surface: #182932;
+  --surface-2: #223a43;
+  --ink: #eff6f5;
+  --muted: #b5c7c9;
+  --line: #344b53;
+  --navy: #345f73;
+  --accent: #95dfcf;
+  --accent-ink: #112c2b;
+  --accent-text: #95dfcf;
+  --focus: #9ad8ca;
   --ok: #7ad7a8;
   --warn-bg: #382c1c;
   --warn-line: #82652d;
   --warn-ink: #ffe7b0;
-  --quote-bg: #302748;
-  --quote-line: #9e87e3;
+  --quote-bg: #203c40;
+  --quote-line: #73b0aa;
 }
 
 @theme inline {
@@ -140,7 +140,7 @@ a { text-underline-offset: 3px; }
 .brand small { font-size: .68rem; margin-top: .15rem; color: var(--muted); }
 .brand-mark {
   display: grid; place-items: center; flex: none; width: 2.6rem; height: 2.6rem;
-  background: #5a3ac2; color: white; border-radius: .72rem;
+  background: #11675f; color: white; border-radius: .72rem;
 }
 .header-nav { display: flex; flex: 1; align-items: center; gap: .3rem; }
 .header-nav a { padding: .5rem .8rem; border-radius: .6rem; font-size: .875rem; font-weight: 600; color: var(--muted); }
@@ -174,10 +174,10 @@ a { text-underline-offset: 3px; }
   background: #fff; color: #514773; border-radius: .68rem; box-shadow: 0 .3rem 1.2rem #160b42aa;
 }
 .hero-search form svg { flex: none; }
-.hero-search input { flex: 1; min-width: 0; height: 2.65rem; color: #211b35; font-size: .9rem; }
+.hero-search input { flex: 1; min-width: 0; height: 2.65rem; color: #182e38; font-size: .9rem; }
 .hero-search input:focus { outline: none; }
 .hero-search form:focus-within { outline: 3px solid #c9b4ff; outline-offset: 3px; }
-.hero-search .btn { flex: none; background: #5a3ac2; color: #fff; white-space: nowrap; }
+.hero-search .btn { flex: none; background: #11675f; color: #fff; white-space: nowrap; }
 .search-results {
   position: absolute; width: 100%; z-index: 10; top: calc(100% + .35rem);
   color: var(--ink); padding: .4rem; box-shadow: 0 .6rem 1.5rem #150a3929;
@@ -368,3 +368,34 @@ a { text-underline-offset: 3px; }
   .library-sidebar .exam-list a svg:first-child { width: .95rem; }
   .library-sidebar .exam-list a svg:last-child { display: none; }
 }
+
+/* Cẩm nang làm bài */
+.handbook { padding-block: clamp(1.3rem, 3vw, 2.7rem); }
+.handbook-cover { display:grid; grid-template-columns:1.25fr 1fr; align-items:center; gap:clamp(2rem,5vw,5rem); padding:clamp(1.7rem,5vw,4.6rem); color:white; background:#102f42; border-radius:1.15rem; border-top:5px solid #4da8a0; }
+.handbook-cover h1, .guide-heading h1 { font:600 clamp(2.6rem,6vw,5rem)/1.08 var(--font-display); letter-spacing:-.045em; }
+.handbook-cover p { color:#d2e2e7; margin-top:1rem; max-width:36rem; }
+.cover-question { border-left:2px solid #72bdb6; padding-left:clamp(1rem,3vw,2.6rem); }
+.cover-question small { color:#a4ded5; font-weight:600; }
+.cover-question h2 { font:600 clamp(1.45rem,2.5vw,2.1rem)/1.25 var(--font-display); margin-top:.65rem; }
+.cover-question a, .guide-link { display:inline-flex; gap:.6rem; align-items:center; margin-top:1.25rem; font-weight:600; }
+.cover-question a { color:#abede0; }
+.guide-link { color:var(--accent-text); }
+.handbook a:hover { text-decoration:underline; }
+.handbook-heading,.archive-search h2,.exercise h2 { font:600 clamp(1.5rem,3vw,2rem)/1.25 var(--font-display); }
+.handbook-heading { margin:2rem 0 1rem; }
+.desk-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.1rem; }
+.desk-grid.pair { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.desk { padding:clamp(1.25rem,2.5vw,2rem); background:var(--surface); border:1px solid var(--line); border-top:3px solid #337780; border-radius:.7rem; display:flex; flex-direction:column; align-items:flex-start; }
+.desk-van { border-top-color:#af8050; }.desk-anh { border-top-color:#567998; }
+.desk h2,.desk h3 { font:600 1.6rem/1.25 var(--font-display); }.desk h3 { margin-top:.8rem; }
+.desk p,.archive-search p,.guide-heading p { color:var(--muted); margin:.6rem 0 1rem; }
+.desk ul { align-self:stretch; margin-top:auto; }
+.desk li { border-top:1px solid var(--line); }.desk li a { display:flex; align-items:center; justify-content:space-between; gap:.7rem; padding:.75rem 0; color:var(--accent-text); font-size:.9rem; font-weight:600; }.desk svg,.guide-link svg { flex:none; }
+.archive-search { margin-top:2rem; border-block:1px solid var(--line); padding:1.5rem 0; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:1rem; }
+.archive-search .hero-search { margin:0; width:100%; }.archive-search p { margin-bottom:0; }
+.archive-search .hero-search form { border:1px solid var(--line); box-shadow:none; }
+.guide-heading { margin:1.75rem 0; max-width:55rem; }.guide-heading h1 { font-size:clamp(2.25rem,5vw,3.7rem); margin:.6rem 0; }
+.exercise { max-width:52rem; background:var(--surface); border:1px solid var(--line); border-left:4px solid #389289; padding:clamp(1.2rem,3vw,2.2rem); border-radius:.6rem; }
+.question-text { margin:1rem 0 1.5rem; font-size:1.2rem; }
+.exercise details { border-top:1px solid var(--line); padding:.8rem 0; }.exercise summary { cursor:pointer;font-weight:600;color:var(--accent-text); }.exercise details p,.exercise details h3 { margin-top:.7rem; }
+@media (max-width:760px) { .handbook-cover,.desk-grid,.desk-grid.pair,.archive-search { grid-template-columns:1fr; }.cover-question { border-left:0; border-top:1px solid #50737f; padding:1.25rem 0 0; }.handbook-cover {gap:1.5rem;} }

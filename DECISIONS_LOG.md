@@ -1,5 +1,7 @@
 # DECISIONS_LOG – Nhật ký quyết định kiến trúc
 
+**Hướng hiện hành từ 21/11/2026.** Trang chủ dẫn vào cẩm nang làm bài theo ba môn. Kho chín bài và đường dẫn cũ tiếp tục hoạt động. Đợt kế tiếp theo [meta-prompt điều phối](prompts/META_PROMPT_FINAL.md) là nghiên cứu cách thử đáp án bằng máy tính. Lộ trình phủ theo mã bài bên dưới là lịch sử.
+
 Mỗi quyết định: bối cảnh → quyết định → lý do → hệ quả. Muốn đổi một quyết định đã chốt, thêm mục mới ghi rõ người quyết định và lý do, không xóa mục cũ.
 
 ## P0-001 · Stack kế thừa repo `home`

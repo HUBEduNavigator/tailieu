@@ -1,5 +1,7 @@
 # HANDOFF – Bàn giao nhiệm vụ
 
+**Hướng hiện hành từ 21/11/2026.** Trang chủ dẫn vào cẩm nang làm bài theo ba môn. Kho chín bài và đường dẫn cũ tiếp tục hoạt động. Đợt kế tiếp theo [meta-prompt điều phối](prompts/META_PROMPT_FINAL.md) là nghiên cứu cách thử đáp án bằng máy tính. Lộ trình phủ theo mã bài bên dưới là lịch sử.
+
 _Cập nhật 2026-11-21 · Hợp nhất học liệu Đợt 2–4_
 
 ## (1) Giai đoạn hiện tại
@@ -80,8 +82,7 @@ Trạng thái xuất bản được theo dõi qua GitHub Actions. Các việc c�
 
 ## (9) Mã nhiệm vụ và prompt cần chạy kế tiếp
 
-1. **`B5` – Đợt 5**. Dùng `prompts/RESUME_PROJECT_PROMPT.md` khi đã chốt chủ đề và đầu vào. Ghi các bước A–B–C trong `PROMPT_INDEX.md`.
-2. **`P2-VERIFY-SEED`** và **`P2-COVERAGE-PLAN`** tiếp tục theo `TASK_QUEUE.md`.
+Dùng [meta-prompt](prompts/META_PROMPT_FINAL.md) trong một chat GPT mới để giao phần thử đáp án bằng máy tính. Kèm bản nghiên cứu của Gemini khi chạy prompt thẩm định và tích hợp.
 
 ## (10) Phần đã chốt – KHÔNG làm lại, KHÔNG tự ý sửa
 
@@ -92,7 +93,7 @@ Chỉ sửa khi người dùng ra quyết định mới và ghi vào `DECISIONS_
 3. KaTeX dựng lúc build với `throwOnError: true`; CSS/phông đóng gói cục bộ; không dùng CDN (P0-003).
 4. Phông đóng gói bằng `@fontsource`; Noto Sans cho IPA (P0-004).
 5. Không thêm hoạt ảnh nặng/thư viện chuyển động (P0-005).
-6. Dùng bảng màu và bố cục thư viện độc lập theo quyết định ngày 2026-11-20. Giữ tên và liên kết về hệ sinh thái HUB EduNavigator.
+6. Dùng bảng màu xanh mực, xanh ngọc và bố cục cẩm nang theo quyết định ngày 2026-11-21. Giữ tên và liên kết về hệ sinh thái HUB EduNavigator.
 7. Lược đồ 15 trường + `accessLevel` (mặc định và bắt buộc `free` ở giai đoạn này); quy ước `id` `MON-LL-CHUDE-NNN` và **các `id` đã đăng không đổi** (CONTENT_SCHEMA.md).
 8. Cấu trúc Thẻ Dẫn chứng 5 trường (bắt buộc có *Giới hạn sử dụng*) và tách khối trích dẫn nguyên văn khỏi diễn giải.
 9. Cách lưu dữ liệu: tệp TS `content/<môn>/<lớp>/` + đăng ký `content/index.ts` + sổ cái `CONTENT_REGISTRY.json`; `npm run validate` là cổng kiểm tra bắt buộc, kể cả trong workflow (P0-008, P0-012).

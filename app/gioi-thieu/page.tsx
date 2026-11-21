@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { TRACK_INFO } from "@/lib/labels";
-import { TRACKS } from "@/lib/schema";
 
 export const metadata: Metadata = { title: "Về kho học liệu và cách kiểm chứng" };
 
@@ -18,12 +16,7 @@ export default function AboutPage() {
 
         <section>
           <h2 className="section-title">Cách tổ chức</h2>
-          <p>Học liệu được xếp theo thứ bậc: Môn → Lớp (6–12) → Nhóm học liệu → Chủ đề → Dạng bài. Có năm nhóm học liệu:</p>
-          <ul className="prose-list mt-2 list-disc">
-            {TRACKS.map((t) => (
-              <li key={t}><strong>{TRACK_INFO[t].name}:</strong> {TRACK_INFO[t].description}</li>
-            ))}
-          </ul>
+          <p>Chọn môn, rồi chọn quyết định bạn muốn luyện. Mỗi chuyên mục mở bằng một tình huống để bạn tự thử trước khi xem gợi ý, cách làm và giới hạn áp dụng. Danh mục vẫn cho phép tra cứu các bài đã xuất bản theo lớp và kỳ thi.</p>
         </section>
 
         <section>

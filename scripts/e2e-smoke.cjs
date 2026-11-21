@@ -53,6 +53,24 @@ const ok = (name, cond, extra='') => { results.push({name, pass: !!cond, extra})
       const o = await m.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth, bsw: document.body.scrollWidth }));
       ok(`375px không tràn ngang: ${u.replace(BASE,'')||'/'}`, o.sw <= o.iw+1 && o.bsw <= o.iw+1, `scrollWidth=${o.sw}/${o.iw}`);
     }
+    const collections = pages.filter(url => new URL(url).pathname.split('/').filter(Boolean).length === 4 && url.includes('/mon/'));
+    ok('Cẩm nang có sáu chuyên mục', collections.length === 6);
+    for (const url of collections) {
+      await m.goto(url);
+      const answer = m.locator('details').last();
+      const limit = answer.getByRole('heading', { name: 'Giới hạn áp dụng' });
+      const hiddenInitially = !(await limit.isVisible());
+      await answer.locator('summary').focus();
+      await m.keyboard.press('Enter');
+      ok('Mở lời giải bằng bàn phím: '+url.replace(BASE,''), hiddenInitially && await limit.isVisible());
+      const reading = m.locator('article > a.guide-link');
+      const destination = new URL(await reading.getAttribute('href'), url);
+      await reading.click();
+      await m.waitForURL(destination.href);
+      await m.locator('main h1').waitFor();
+      const anchor = new URL(m.url()).hash;
+      ok('Đọc tiếp đúng tài liệu và mục: '+url.replace(BASE,''), m.url().includes('/bai/') && (!anchor || await m.locator(anchor).count() === 1));
+    }
     for (const slug of ['toan-06-sn-001','toan-06-ch-001','toan-09-ptb2-001','toan-12-cuctri-001','van-06-dhtr-001','van-12-nlxh-001','anh-06-pron-001','anh-06-gram-001','anh-12-notice-001']) {
       for (const [label, pg] of [['desktop', page], ['mobile', m]]) {
         await pg.goto(`${BASE}/bai/${slug}/`, { waitUntil: 'networkidle' });

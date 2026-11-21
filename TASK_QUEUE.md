@@ -1,5 +1,7 @@
 # TASK_QUEUE – Hàng đợi nhiệm vụ theo 4 giai đoạn
 
+**Hướng hiện hành từ 21/11/2026.** Trang chủ dẫn vào cẩm nang làm bài theo ba môn. Kho chín bài và đường dẫn cũ tiếp tục hoạt động. Đợt kế tiếp theo [meta-prompt điều phối](prompts/META_PROMPT_FINAL.md) là nghiên cứu cách thử đáp án bằng máy tính. Lộ trình phủ theo mã bài bên dưới là lịch sử.
+
 Ký hiệu: ✅ xong · ⏭ kế tiếp · ⬜ chờ. Mã nhiệm vụ đặt theo `PHASE-PHẠM VI`.
 
 ## Giai đoạn 1 – Khởi tạo (P0) ✅
@@ -12,7 +14,7 @@ Ký hiệu: ✅ xong · ⏭ kế tiếp · ⬜ chờ. Mã nhiệm vụ đặt th
 - ✅ `B2-C` – `VAN-06-DHTR-001`: đã tích hợp bài Ngữ văn 6 sau khi người dùng xác nhận đạt kiểm tra chéo Gemini.
 - ✅ `B3-C` – `ANH-06-GRAM-001`: đã tích hợp và kiểm thử.
 - ✅ `B4` – `TOAN-06-CH-001`: đã tích hợp và kiểm thử. Kết quả của bản gộp Đợt 2–4 được ghi tại `HANDOFF.md` mục 3.
-- ⏭ `B5` – Đợt 5: chờ chốt môn, lớp, chủ đề và hồ sơ học liệu.
+- Lộ trình B5 đã được thay bằng đợt nghiên cứu đầu tiên của Cẩm nang làm bài.
 - ⏭ `P2-COVERAGE-PLAN`: lập danh sách chủ đề/dạng bài cho từng môn × lớp × nhóm; điền `COVERAGE_MATRIX.csv` (`planned_count`). Cần chốt thứ tự ưu tiên với người dùng (đề xuất: lớp 9 và 12 trước vì gắn kỳ thi).
 - ⬜ `P2-VERIFY-SEED`: thẩm định độc lập A ⇄ B cho 5 đơn vị seed; xử lý `verification.openItems`; nâng `verified` nếu đạt (xem `HANDOFF.md` mục 6–7).
 - ⬜ `P2-AUDIO-IPA` (tùy chọn): nghiên cứu cách đưa âm thanh mẫu IPA hợp lệ (không vi phạm bản quyền).

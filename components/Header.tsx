@@ -16,7 +16,7 @@ export function Header() {
       <div className="container-x header-inner">
         <Link href="/" prefetch={false} className="brand">
           <Logo />
-          <span><strong>Kho học liệu</strong><small>HUB EduNavigator</small></span>
+          <span><strong>Cẩm nang làm bài</strong><small>HUB EduNavigator</small></span>
         </Link>
         <nav aria-label="Menu chính" className="header-nav">
           {links.map(({ href, label }) => (

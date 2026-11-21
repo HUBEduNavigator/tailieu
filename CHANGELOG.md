@@ -2,6 +2,11 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạng YYYY-MM-DD.
 
+## 2026-11-21 · Cẩm nang làm bài thi
+
+- Mở sáu chuyên mục thuộc ba môn với tình huống tự thử, gợi ý, lời giải và giới hạn áp dụng. Trang chủ dùng bảng màu xanh mực và xanh ngọc.
+- Bổ sung meta-prompt cho quy trình nghiên cứu Gemini, thẩm định và tích hợp bằng GPT.
+
 ## [Chưa phát hành] – Đợt 2–4
 
 - Bổ sung bài Toán 6 `TOAN-06-CH-001` về phân tích thừa số nguyên tố, ƯCLN, BCNN và bài toán thực tế, gồm 5 ví dụ có lời giải.

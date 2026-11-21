@@ -2,7 +2,7 @@
 
 | Mã | Mục đích | Tệp | Trạng thái |
 |---|---|---|---|
-| `META_PROMPT_FINAL` | Meta-prompt gốc của dự án (định hướng chung cho các AI) | `prompts/META_PROMPT_FINAL.md` | **Giữ chỗ** – chờ người dùng dán toàn văn (P0 không nhận được nội dung) |
+| `META_PROMPT_FINAL` | Meta-prompt gốc của dự án (định hướng chung cho các AI) | `prompts/META_PROMPT_FINAL.md` | Sẵn sàng dùng · mỗi đợt một prompt nghiên cứu và một prompt thẩm định, tích hợp |
 | `P0-TAILIEU-CORE` | Khởi tạo khung website và hệ thống quản lý đa AI | `prompts/P0-TAILIEU-CORE.md` | **Đã chạy** (Claude Code), xong v0.1.0 |
 | `RESUME_PROJECT_PROMPT` | Prompt trung lập để bất kỳ AI nào tiếp quản đúng điểm dừng | `prompts/RESUME_PROJECT_PROMPT.md` | Sẵn sàng dùng |
 | `B2-A` | Nghiên cứu bài Ngữ văn 6 bằng Gemini Deep Research | Bản nghiên cứu được dẫn trong hồ sơ Đợt 2 | Đã chuyển sang thẩm định |

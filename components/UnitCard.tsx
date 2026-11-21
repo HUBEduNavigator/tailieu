@@ -20,7 +20,6 @@ export function UnitCard({ item }: { item: CatalogItem }) {
       <div className="document-meta">
         <span>{TRACK_INFO[item.track].name}</span>
         <span>{DIFFICULTY_INFO[item.difficulty].name}</span>
-        <span className="font-mono">{item.id}</span>
       </div>
     </Link>
   );
