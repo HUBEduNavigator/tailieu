@@ -2,6 +2,12 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Ngày theo định dạng YYYY-MM-DD.
 
+## [Chưa phát hành] – Đợt 4
+
+- Bổ sung bài Toán 6 `TOAN-06-CH-001` về phân tích thừa số nguyên tố, ƯCLN, BCNN và bài toán thực tế, gồm 5 ví dụ có lời giải.
+- Cập nhật căn cứ chương trình, hồ sơ nguồn và kiểm thử trình duyệt cho công thức, tìm kiếm và bộ lọc của bài mới.
+- Cho phép cuộn ngang trong danh sách kiến thức trọng tâm khi công thức dài hơn vùng đọc.
+
 ## [0.2.0] – 2026-11-20
 
 - Thiết kế riêng cho kho học liệu. Trang khám phá đưa tìm kiếm, danh sách tài liệu và lối tắt theo môn, lớp, kỳ thi vào cùng một bố cục.
